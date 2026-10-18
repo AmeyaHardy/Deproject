@@ -1,0 +1,8 @@
+{
+  "venvPath": ".",
+  "venv": ".venv",
+  "extraPaths": [
+    "C:/Users/sweni/AppData/Local/Programs/Python/Python310/lib/site-packages",
+    "./src"
+  ]
+}
