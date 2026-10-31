@@ -141,6 +141,8 @@ Each record is assigned to exactly one window based on its `event_time`. Records
 |--------|---------|
 | `window_start` / `window_end` | The 5-second window boundaries |
 | `record_count` | Number of network records in this window |
+| `flagged_count` | Number of flows in this window scored as anomalous (when `--score` is enabled) |
+| `window_alert` | Binary alert flag (1 if `flagged_count >= alert_k`, else 0) |
 | `avg_src_pkts` / `avg_dst_pkts` | Average source/destination packets per record |
 | `avg_src_bytes` / `avg_dst_bytes` | Average source/destination bytes per record |
 | `total_bytes` | Total bytes (src + dst) transferred in this window |
@@ -150,7 +152,35 @@ Each record is assigned to exactly one window based on its `event_time`. Records
 | `tcp_count` / `udp_count` / `other_proto_count` | Protocol distribution within the window |
 | `attack_records` | Count of records with ground-truth `label=1` |
 
-> **Important**: `attack_records` is the ground-truth label count from the dataset. It does **NOT** represent detection output. This field exists only for offline evaluation. Real anomaly detection will be implemented in a later stage.
+> **Important**: `attack_records` is the ground-truth label count from the dataset used strictly for evaluation. `flagged_count` and `window_alert` are the actual machine-learning detection outputs from the Random Forest model.
+
+## Real-Time Anomaly Scoring Inside Spark (Gate A7)
+
+To score records in real time with the Random Forest model inside Spark:
+
+### 1. Environment Variables (Required for Every New Terminal)
+```powershell
+$env:JAVA_HOME = "C:\Program Files\Java\jre1.8.0_461"
+$env:HADOOP_HOME = "C:\Users\sweni\hadoop"
+cd C:\Users\sweni\Documents\DE-Network-Monitoring
+.\.venv\Scripts\Activate.ps1
+```
+
+### 2. Start Consumer with ML Scoring Enabled
+```powershell
+python src/spark_streaming.py `
+  --score `
+  --shuffle-partitions 2 `
+  --alert-k 3 `
+  --threshold-file data/processed/models/calibrated_threshold.json
+```
+
+### 3. Replay Canonical Raw Traffic (In Second Terminal)
+```powershell
+cd C:\Users\sweni\Documents\DE-Network-Monitoring
+.\.venv\Scripts\Activate.ps1
+python src/csv_replayer.py --raw --kafka --topic network-traffic --rate 100 --limit 2000
+```
 
 ## Fresh Test Procedure
 

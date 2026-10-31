@@ -60,6 +60,7 @@ from pyspark.sql.types import (
     DoubleType,
     LongType,
 )
+from src.raw_loader import FEATURE_NAMES
 
 # ── Configuration Defaults ───────────────────────────────────────────────────
 
@@ -121,6 +122,8 @@ features_schema = StructType([
     StructField("ct_srv_dst",         DoubleType()),
     StructField("is_sm_ips_ports",    DoubleType()),
     # Support alternate naming in raw 49-column files
+    StructField("sintpkt",            DoubleType()),
+    StructField("dintpkt",            DoubleType()),
     StructField("smeansz",            DoubleType()),
     StructField("dmeansz",            DoubleType()),
     StructField("res_bdy_len",        DoubleType()),
@@ -197,6 +200,31 @@ def parse_args():
         type=str,
         default=None,
         help="Output path to write benchmark execution metrics JSON.",
+    )
+    # Anomaly scoring options (Gate A7 / Part B)
+    parser.add_argument(
+        "--score",
+        action="store_true",
+        default=False,
+        help="Enable real-time anomaly detection scoring inside Spark.",
+    )
+    parser.add_argument(
+        "--model-dir",
+        type=str,
+        default=str(Path("data/processed/models").resolve()),
+        help="Directory containing trained model and preprocessing artifacts.",
+    )
+    parser.add_argument(
+        "--threshold-file",
+        type=str,
+        default=str(Path("data/processed/models/calibrated_threshold.json").resolve()),
+        help="JSON file containing the calibrated anomaly detection threshold.",
+    )
+    parser.add_argument(
+        "--alert-k",
+        type=int,
+        default=3,
+        help="Minimum number of flagged flows in a 5s window to trigger a window_alert (default: 3).",
     )
     return parser.parse_args()
 
@@ -288,40 +316,96 @@ def main():
 
     print("Spark session created successfully.\n")
 
+    # ── Real-Time Scoring Setup (Gate A7) ────────────────────────────────
+    if args.score:
+        model_path = Path(args.model_dir) / "rf_detector.joblib"
+        if not model_path.exists():
+            model_path = Path("data/processed/models/rf_detector.joblib").resolve()
+        preproc_path = Path("data/processed/preprocessing_artifacts").resolve()
+
+        thresh_path = Path(args.threshold_file)
+        threshold = 0.5
+        if thresh_path.exists():
+            try:
+                t_cfg = json.loads(thresh_path.read_text(encoding="utf-8"))
+                threshold = float(t_cfg.get("threshold", 0.5))
+            except Exception as e:
+                print(f"WARN: Could not load threshold from {thresh_path}: {e}")
+
+        print(f"Real-time scoring enabled:")
+        print(f"  Model file       = {model_path}")
+        print(f"  Preprocessor dir = {preproc_path}")
+        print(f"  Threshold        = {threshold:.4f} (from {thresh_path})")
+        print(f"  Alert threshold  = >= {args.alert_k} flagged flows per window\n")
+
+        model_file_str = str(model_path.resolve())
+        preproc_dir_str = str(preproc_path.resolve())
+
+        _WORKER_MODEL = None
+        _WORKER_PREPROC = None
+
+        def get_worker_artifacts():
+            global _WORKER_MODEL, _WORKER_PREPROC
+            if _WORKER_MODEL is None:
+                import joblib
+                from src.anomaly.preprocessing import FrozenPreprocessor
+                _WORKER_MODEL = joblib.load(model_file_str)
+                _WORKER_PREPROC = FrozenPreprocessor.load(preproc_dir_str)
+            return _WORKER_MODEL, _WORKER_PREPROC
+
+        import pandas as pd
+
+        @F.pandas_udf(DoubleType())
+        def score_anomaly_udf(*cols: pd.Series) -> pd.Series:
+            model, preproc = get_worker_artifacts()
+            # Feature matrix strictly containing the 41 behavioral features
+            pdf = pd.DataFrame(dict(zip(FEATURE_NAMES, cols)))
+            pdf_proc = preproc.transform(pdf)
+            scores = model.predict_proba(pdf_proc)[:, 1]
+            return pd.Series(scores, dtype="float64")
+
     # ── Read from Kafka ─────────────────────────────────────────────────
     raw_stream = (
         spark.readStream
         .format("kafka")
         .option("kafka.bootstrap.servers", args.broker)
         .option("subscribe", args.topic)
-        # Start from the earliest available offset so we don't miss messages
-        # that were produced before this consumer started.
         .option("startingOffsets", "earliest")
-        # failOnDataLoss=false prevents the stream from crashing if Kafka
-        # has deleted old segments (common during development restarts).
         .option("failOnDataLoss", "false")
         .load()
     )
 
     # ── Parse JSON ──────────────────────────────────────────────────────
-    # Kafka gives us: key (binary), value (binary), topic, partition,
-    # offset, timestamp, timestampType.
-    # We only need the value, which contains our JSON payload.
-    parsed = (
+    parsed_base = (
         raw_stream
         .selectExpr("CAST(value AS STRING) AS json_str")
         .select(
             F.from_json(F.col("json_str"), message_schema).alias("data")
         )
-        # Filter out rows where JSON parsing failed (data will be null)
         .filter(F.col("data").isNotNull())
+    )
+
+    if args.score:
+        feature_cols = [
+            F.coalesce(
+                F.col(f"data.features.{c}"),
+                F.lit(0.0) if c not in ("proto", "service", "state") else F.lit("none")
+            )
+            for c in FEATURE_NAMES
+        ]
+        parsed_scored = parsed_base.withColumn("anomaly_score", score_anomaly_udf(*feature_cols))
+        parsed_scored = parsed_scored.withColumn("flagged", (F.col("anomaly_score") >= threshold).cast("integer"))
+    else:
+        parsed_scored = parsed_base.withColumn("anomaly_score", F.lit(0.0).cast("double"))
+        parsed_scored = parsed_scored.withColumn("flagged", F.lit(0).cast("integer"))
+
+    parsed = (
+        parsed_scored
         .select(
             F.col("data.record_id").alias("record_id"),
-            # Context fields
             F.col("data.context.srcip").alias("srcip"),
-            # Parse the ISO-8601 event_time string into a proper timestamp
             F.to_timestamp(F.col("data.event_time")).alias("event_time"),
-            # Traffic metrics we'll aggregate
+            F.col("data.ingest_time").alias("ingest_time"),
             F.col("data.features.proto").alias("proto"),
             F.col("data.features.spkts").alias("spkts"),
             F.col("data.features.dpkts").alias("dpkts"),
@@ -331,72 +415,53 @@ def main():
             F.col("data.features.rate").alias("rate"),
             F.col("data.features.sload").alias("sload"),
             F.col("data.features.dload").alias("dload"),
-            # Keep ground-truth separate — NOT used for detection
             F.col("data.evaluation.label").alias("label"),
             F.col("data.evaluation.attack_cat").alias("attack_cat"),
+            F.col("anomaly_score"),
+            F.col("flagged"),
         )
-        # Drop records where event_time couldn't be parsed
         .filter(F.col("event_time").isNotNull())
     )
 
     # ── Watermark ───────────────────────────────────────────────────────
-    # We set a 10-second watermark to allow for event-time disorder.
-    # Because csv_replayer.py generates event_time at emission time,
-    # records should be approximately in order.  A 10-second watermark
-    # is generous enough to handle minor delays without dropping data.
     watermarked = parsed.withWatermark("event_time", "10 seconds")
 
     # ── 5-Second Tumbling Window Aggregations ───────────────────────────
-    #
-    # Why "update" output mode?
-    # ─────────────────────────
-    # "complete" mode outputs the entire result table on every trigger,
-    #   which grows unbounded for streaming data.
-    # "append" mode only outputs rows after the watermark passes them,
-    #   meaning results appear with a delay equal to the watermark.
-    # "update" mode outputs only changed/new rows each trigger, which
-    #   gives the fastest feedback during development and keeps output
-    #   compact.  It works well with windowed aggregations + watermark.
-    #
-    # For a later stage (writing to PostgreSQL/Parquet), we may switch
-    # to "append" mode for exactly-once guarantees.
+    agg_exprs = [
+        F.count("*").alias("record_count"),
+        F.round(F.avg("spkts"), 2).alias("avg_src_pkts"),
+        F.round(F.avg("dpkts"), 2).alias("avg_dst_pkts"),
+        F.round(F.avg("sbytes"), 2).alias("avg_src_bytes"),
+        F.round(F.avg("dbytes"), 2).alias("avg_dst_bytes"),
+        F.round(F.sum("sbytes") + F.sum("dbytes"), 2).alias("total_bytes"),
+        F.round(F.avg("dur"), 4).alias("avg_duration"),
+        F.round(F.avg("rate"), 2).alias("avg_rate"),
+        F.round(F.avg("sload"), 2).alias("avg_src_load"),
+        F.round(F.avg("dload"), 2).alias("avg_dst_load"),
+        F.count(F.when(F.col("proto") == "tcp", True)).alias("tcp_count"),
+        F.count(F.when(F.col("proto") == "udp", True)).alias("udp_count"),
+        F.count(
+            F.when(
+                ~F.col("proto").isin("tcp", "udp"), True
+            )
+        ).alias("other_proto_count"),
+        F.sum("flagged").cast("int").alias("flagged_count"),
+        F.when(F.sum("flagged") >= args.alert_k, 1).otherwise(0).alias("window_alert"),
+        F.sum(F.col("label")).cast("int").alias("attack_records"),
+    ]
 
     window_stats = (
         watermarked
         .groupBy(
             F.window("event_time", "5 seconds"),
         )
-        .agg(
-            F.count("*").alias("record_count"),
-            # Packet statistics
-            F.round(F.avg("spkts"), 2).alias("avg_src_pkts"),
-            F.round(F.avg("dpkts"), 2).alias("avg_dst_pkts"),
-            # Byte statistics
-            F.round(F.avg("sbytes"), 2).alias("avg_src_bytes"),
-            F.round(F.avg("dbytes"), 2).alias("avg_dst_bytes"),
-            F.round(F.sum("sbytes") + F.sum("dbytes"), 2).alias("total_bytes"),
-            # Duration and rate
-            F.round(F.avg("dur"), 4).alias("avg_duration"),
-            F.round(F.avg("rate"), 2).alias("avg_rate"),
-            # Load
-            F.round(F.avg("sload"), 2).alias("avg_src_load"),
-            F.round(F.avg("dload"), 2).alias("avg_dst_load"),
-            # Protocol distribution (top protocols as a summary string)
-            F.count(F.when(F.col("proto") == "tcp", True)).alias("tcp_count"),
-            F.count(F.when(F.col("proto") == "udp", True)).alias("udp_count"),
-            F.count(
-                F.when(
-                    ~F.col("proto").isin("tcp", "udp"), True
-                )
-            ).alias("other_proto_count"),
-            # Ground-truth stats (for offline evaluation only, NOT detection)
-            F.sum(F.col("label")).cast("int").alias("attack_records"),
-        )
-        # Format the window boundaries for readable output
+        .agg(*agg_exprs)
         .select(
             F.col("window.start").alias("window_start"),
             F.col("window.end").alias("window_end"),
             "record_count",
+            "flagged_count",
+            "window_alert",
             "avg_src_pkts",
             "avg_dst_pkts",
             "avg_src_bytes",

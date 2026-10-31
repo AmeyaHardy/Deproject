@@ -1,0 +1,133 @@
+{
+  "date": "2026-10-31",
+  "seed": 42,
+  "topic": "anomaly-eval-20261031_170314",
+  "threshold": 0.8243745741878048,
+  "alert_k": 3,
+  "reconciliation": {
+    "records_produced": 2000,
+    "records_consumed": 2000,
+    "records_scored": 2000,
+    "reconciled": true
+  },
+  "latency": {
+    "flow_processing_latency_ms": {
+      "p50": 4410.449862480164,
+      "p95": 9929.026579856873,
+      "mean": 4658.910700798035
+    },
+    "attack_burst_detection_latency_s": 2.9947996139526367,
+    "cold_start_note": "Initial micro-batch latency includes JVM warm-up and joblib model unpickling into worker memory."
+  },
+  "throughput": {
+    "replay_rate_rec_per_sec": 60.453445086749774,
+    "total_records": 2000,
+    "replay_duration_sec": 33.083308935165405
+  },
+  "window_summary": {
+    "total_windows": 34,
+    "alert_windows": 25,
+    "sample_windows": [
+      {
+        "window_start": "2015-01-22 17:20:15",
+        "window_end": "2015-01-22 17:20:20",
+        "record_count": 50,
+        "flagged_count": 5,
+        "window_alert": 1,
+        "attack_records": 5,
+        "batch_id": 0,
+        "wall_time": 1793446415.1815538
+      },
+      {
+        "window_start": "2015-01-22 17:20:20",
+        "window_end": "2015-01-22 17:20:25",
+        "record_count": 6,
+        "flagged_count": 1,
+        "window_alert": 0,
+        "attack_records": 1,
+        "batch_id": 0,
+        "wall_time": 1793446415.1815538
+      },
+      {
+        "window_start": "2015-01-22 17:20:10",
+        "window_end": "2015-01-22 17:20:15",
+        "record_count": 8,
+        "flagged_count": 1,
+        "window_alert": 0,
+        "attack_records": 1,
+        "batch_id": 0,
+        "wall_time": 1793446415.1815538
+      },
+      {
+        "window_start": "2015-01-22 17:20:20",
+        "window_end": "2015-01-22 17:20:25",
+        "record_count": 67,
+        "flagged_count": 5,
+        "window_alert": 1,
+        "attack_records": 5,
+        "batch_id": 1,
+        "wall_time": 1793446424.8487601
+      },
+      {
+        "window_start": "2015-01-22 17:20:15",
+        "window_end": "2015-01-22 17:20:20",
+        "record_count": 81,
+        "flagged_count": 6,
+        "window_alert": 1,
+        "attack_records": 6,
+        "batch_id": 1,
+        "wall_time": 1793446424.8487601
+      },
+      {
+        "window_start": "2015-01-22 17:20:25",
+        "window_end": "2015-01-22 17:20:30",
+        "record_count": 61,
+        "flagged_count": 7,
+        "window_alert": 1,
+        "attack_records": 7,
+        "batch_id": 1,
+        "wall_time": 1793446424.8487601
+      },
+      {
+        "window_start": "2015-01-22 17:20:35",
+        "window_end": "2015-01-22 17:20:40",
+        "record_count": 51,
+        "flagged_count": 4,
+        "window_alert": 1,
+        "attack_records": 4,
+        "batch_id": 1,
+        "wall_time": 1793446424.8487601
+      },
+      {
+        "window_start": "2015-01-22 17:20:40",
+        "window_end": "2015-01-22 17:20:45",
+        "record_count": 428,
+        "flagged_count": 4,
+        "window_alert": 1,
+        "attack_records": 4,
+        "batch_id": 1,
+        "wall_time": 1793446424.8487601
+      },
+      {
+        "window_start": "2015-01-22 17:20:45",
+        "window_end": "2015-01-22 17:20:50",
+        "record_count": 28,
+        "flagged_count": 1,
+        "window_alert": 0,
+        "attack_records": 1,
+        "batch_id": 1,
+        "wall_time": 1793446424.8487601
+      },
+      {
+        "window_start": "2015-01-22 17:19:35",
+        "window_end": "2015-01-22 17:19:40",
+        "record_count": 4,
+        "flagged_count": 0,
+        "window_alert": 0,
+        "attack_records": 0,
+        "batch_id": 1,
+        "wall_time": 1793446424.8487601
+      }
+    ]
+  }
+}
