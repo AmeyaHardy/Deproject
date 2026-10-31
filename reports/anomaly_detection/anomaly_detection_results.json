@@ -1,0 +1,296 @@
+{
+  "srcip_prefix_baseline": {
+    "model": "srcip-prefix-rule",
+    "accuracy": 0.9760613857746738,
+    "precision": 0.738103217158177,
+    "recall": 1.0,
+    "f1": 0.849320350911019,
+    "roc_auc": null,
+    "pr_auc": null,
+    "true_positives": 4405,
+    "false_positives": 1563,
+    "true_negatives": 59324,
+    "false_negatives": 0,
+    "fpr": 0.0256705043769606,
+    "alerts_per_hour": 1042.192578219743,
+    "per_class_recall": {
+      "Analysis": {
+        "count": 19,
+        "recall": 1.0
+      },
+      "Backdoor": {
+        "count": 33,
+        "recall": 1.0
+      },
+      "DoS": {
+        "count": 283,
+        "recall": 1.0
+      },
+      "Exploits": {
+        "count": 1422,
+        "recall": 1.0
+      },
+      "Fuzzers": {
+        "count": 738,
+        "recall": 1.0
+      },
+      "Generic": {
+        "count": 1281,
+        "recall": 1.0
+      },
+      "Normal": {
+        "count": 60887,
+        "recall": 0.0
+      },
+      "Reconnaissance": {
+        "count": 532,
+        "recall": 1.0
+      },
+      "Shellcode": {
+        "count": 84,
+        "recall": 1.0
+      },
+      "Worms": {
+        "count": 13,
+        "recall": 1.0
+      }
+    }
+  },
+  "ttl_trio_baseline": {
+    "model": "TTL-trio-tree",
+    "accuracy": 0.9760460699626294,
+    "precision": 0.7403960060924014,
+    "recall": 0.9931895573212258,
+    "f1": 0.8483614504556913,
+    "roc_auc": 0.9802452458077799,
+    "pr_auc": 0.6927630914998093,
+    "true_positives": 4375,
+    "false_positives": 1534,
+    "true_negatives": 59353,
+    "false_negatives": 30,
+    "fpr": 0.02519421222921149,
+    "alerts_per_hour": 1031.889400921659,
+    "per_class_recall": {
+      "Analysis": {
+        "count": 19,
+        "recall": 1.0
+      },
+      "Backdoor": {
+        "count": 33,
+        "recall": 0.9393939393939394
+      },
+      "DoS": {
+        "count": 283,
+        "recall": 0.9646643109540636
+      },
+      "Exploits": {
+        "count": 1422,
+        "recall": 0.9922644163150492
+      },
+      "Fuzzers": {
+        "count": 738,
+        "recall": 0.9986449864498645
+      },
+      "Generic": {
+        "count": 1281,
+        "recall": 0.9953161592505855
+      },
+      "Normal": {
+        "count": 60887,
+        "recall": 0.0
+      },
+      "Reconnaissance": {
+        "count": 532,
+        "recall": 1.0
+      },
+      "Shellcode": {
+        "count": 84,
+        "recall": 1.0
+      },
+      "Worms": {
+        "count": 13,
+        "recall": 1.0
+      }
+    }
+  },
+  "random_forest": {
+    "model": "RandomForest-41-features",
+    "accuracy": 0.9834436071800526,
+    "precision": 0.8032846715328467,
+    "recall": 0.9993189557321226,
+    "f1": 0.890642387455741,
+    "roc_auc": 0.9940966860942434,
+    "pr_auc": 0.9128750094172271,
+    "true_positives": 4402,
+    "false_positives": 1078,
+    "true_negatives": 59809,
+    "false_negatives": 3,
+    "fpr": 0.017704928802535845,
+    "alerts_per_hour": 956.9730778559301,
+    "per_class_recall": {
+      "Analysis": {
+        "count": 19,
+        "recall": 1.0
+      },
+      "Backdoor": {
+        "count": 33,
+        "recall": 1.0
+      },
+      "DoS": {
+        "count": 283,
+        "recall": 1.0
+      },
+      "Exploits": {
+        "count": 1422,
+        "recall": 1.0
+      },
+      "Fuzzers": {
+        "count": 738,
+        "recall": 0.9986449864498645
+      },
+      "Generic": {
+        "count": 1281,
+        "recall": 0.9984387197501952
+      },
+      "Normal": {
+        "count": 60887,
+        "recall": 0.0
+      },
+      "Reconnaissance": {
+        "count": 532,
+        "recall": 1.0
+      },
+      "Shellcode": {
+        "count": 84,
+        "recall": 1.0
+      },
+      "Worms": {
+        "count": 13,
+        "recall": 1.0
+      }
+    }
+  },
+  "feature_importances": {
+    "ct_state_ttl": 0.22553709392882515,
+    "sttl": 0.2250983701909666,
+    "dttl": 0.09799397318186202,
+    "tcprtt": 0.08687446623272178,
+    "synack": 0.05937035198299619,
+    "ackdat": 0.05680388515415228,
+    "dload": 0.038162083260802775,
+    "dmeansz": 0.03416371791236703,
+    "dintpkt": 0.024355943844782978,
+    "sintpkt": 0.02255558102837415,
+    "dpkts": 0.016084510262262663,
+    "sjit": 0.01586988095361859,
+    "dbytes": 0.015418952527487713,
+    "state_enc": 0.014986495865655492,
+    "ct_dst_ltm": 0.010417034698606336,
+    "sload": 0.009636925444741993,
+    "dur": 0.00954589836562981,
+    "djit": 0.009173740097957224,
+    "ct_srv_dst": 0.004675798064936137,
+    "spkts": 0.0045314309957373055,
+    "dloss": 0.002880685011408076,
+    "smeansz": 0.0026225356165254982,
+    "sbytes": 0.002066218178879588,
+    "service_enc": 0.0019609863446237662,
+    "res_bdy_len": 0.001561893376385305,
+    "ct_srv_src": 0.0015453081082406137,
+    "stcpb": 0.0009695269605255387,
+    "sloss": 0.0008942996538308293,
+    "ct_src_ltm": 0.0008898323667838289,
+    "proto_enc": 0.0008294798624410285,
+    "dtcpb": 0.0007105233163889445,
+    "ct_dst_src_ltm": 0.0005045800128917945,
+    "swin": 0.000465734459381966,
+    "ct_src_dport_ltm": 0.00035345841845364187,
+    "dwin": 0.0002466358812516198,
+    "ct_dst_sport_ltm": 0.00010924114489421831,
+    "trans_depth": 6.405351267293131e-05,
+    "is_ftp_login": 6.210465679942905e-05,
+    "ct_flw_http_mthd": 6.769123136796022e-06,
+    "ct_ftp_cmd": 1.9618943079964288e-16,
+    "is_sm_ips_ports": 0.0
+  },
+  "label_permutation_test_cross_session": {
+    "test_type": "cross-session",
+    "permutation_aucs": [
+      0.6915140245937065,
+      0.6673789541881672,
+      0.7343155172529183,
+      0.5829601278280208,
+      0.6913370215385874
+    ],
+    "mean_permutation_auc": 0.67350112908028,
+    "at_chance": false
+  },
+  "label_permutation_test_intra_session": {
+    "test_type": "intra-session",
+    "session": 1,
+    "train_frac": 0.6,
+    "n_rows_used": 99998,
+    "permutation_aucs": [
+      0.4895820692670988,
+      0.3633816604263521,
+      0.484576289252652,
+      0.4996067874482362,
+      0.6583452061470305
+    ],
+    "mean_permutation_auc": 0.49909840250827386,
+    "at_chance": true
+  },
+  "random_forest_reverse": {
+    "model": "RandomForest-41-reverse (S1->S0)",
+    "accuracy": 0.986840763031725,
+    "precision": 0.7169768497503405,
+    "recall": 0.9865708931917552,
+    "f1": 0.830441640378549,
+    "roc_auc": 0.9960980720490238,
+    "pr_auc": 0.8844033560187934,
+    "true_positives": 3159,
+    "false_positives": 1247,
+    "true_negatives": 93581,
+    "false_negatives": 43,
+    "fpr": 0.013150124435820644,
+    "alerts_per_hour": 515.0037338874638,
+    "per_class_recall": {
+      "Backdoor": {
+        "count": 15,
+        "recall": 0.8666666666666667
+      },
+      "DoS": {
+        "count": 159,
+        "recall": 1.0
+      },
+      "Exploits": {
+        "count": 1104,
+        "recall": 0.9990942028985508
+      },
+      "Fuzzers": {
+        "count": 1289,
+        "recall": 0.9712955779674166
+      },
+      "Generic": {
+        "count": 166,
+        "recall": 0.9939759036144579
+      },
+      "Normal": {
+        "count": 94828,
+        "recall": 0.0
+      },
+      "Reconnaissance": {
+        "count": 398,
+        "recall": 1.0
+      },
+      "Shellcode": {
+        "count": 64,
+        "recall": 0.96875
+      },
+      "Worms": {
+        "count": 7,
+        "recall": 1.0
+      }
+    }
+  }
+}

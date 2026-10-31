@@ -1,0 +1,37 @@
+{
+  "latency": {
+    "p50_latency_s": 5.2728,
+    "p95_latency_s": 5.3522,
+    "mean_latency_s": 5.1712,
+    "min_latency_s": 3.2616,
+    "max_latency_s": 5.3949,
+    "std_latency_s": 0.3209,
+    "n_detected_windows": 316,
+    "n_missed_windows": 0,
+    "n_total_attack_windows": 316,
+    "window_detection_rate": 1.0
+  },
+  "cold_start": {
+    "n_cold_start_windows": 20,
+    "n_cold_start_attack_windows": 16,
+    "n_cold_start_detected": 16,
+    "cold_start_detection_rate": 1.0,
+    "cold_start_avg_processing_ms": 264.184
+  },
+  "throughput": {
+    "total_records_scored": 49998,
+    "total_scoring_time_ms": 89286.76,
+    "n_windows": 325,
+    "avg_records_per_window": 153.8,
+    "avg_window_processing_ms": 274.728,
+    "p95_window_processing_ms": 352.544,
+    "records_per_second": 560.0
+  },
+  "window_seconds": 5,
+  "threshold": 0.5,
+  "simulation_wall_time_s": 90.62,
+  "evaluation_session": 1,
+  "evaluation_records": 49998,
+  "evaluation_attacks": 7662,
+  "evaluation_duration_h": 5.53
+}

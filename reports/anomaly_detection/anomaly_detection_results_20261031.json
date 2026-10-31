@@ -1,0 +1,228 @@
+{
+  "dataset_stats": {
+    "s0_dedup_rows": 1014929,
+    "s0_dedup_attacks": 11849,
+    "s0_dedup_attack_pct": 1.1674708280086588,
+    "s1_dedup_rows": 1001707,
+    "s1_dedup_attacks": 66432,
+    "s1_dedup_attack_pct": 6.6318793818951045
+  },
+  "S0_to_S1": {
+    "calibrated_threshold": 0.0,
+    "accuracy": 0.06631879381895105,
+    "precision": 0.06631879381895105,
+    "recall": 1.0,
+    "f1": 0.12438830526738562,
+    "roc_auc": 0.9960620417817955,
+    "pr_auc": 0.9411435128411499,
+    "fpr": 1.0,
+    "alerts_per_hour": 83746.9856014863,
+    "tp": 66432,
+    "fp": 935275,
+    "tn": 0,
+    "fn": 0,
+    "test_duration_hours": 11.96111111111111,
+    "rf_train_time_s": 30.019190311431885,
+    "scoring_time_s": 1.690504789352417,
+    "per_class_recall": {
+      "Analysis": {
+        "count": 538,
+        "recall": 1.0,
+        "unreliable": false
+      },
+      "Backdoor": {
+        "count": 380,
+        "recall": 1.0,
+        "unreliable": false
+      },
+      "DoS": {
+        "count": 3747,
+        "recall": 1.0,
+        "unreliable": false
+      },
+      "Exploits": {
+        "count": 21948,
+        "recall": 1.0,
+        "unreliable": false
+      },
+      "Fuzzers": {
+        "count": 15743,
+        "recall": 1.0,
+        "unreliable": false
+      },
+      "Generic": {
+        "count": 15418,
+        "recall": 1.0,
+        "unreliable": false
+      },
+      "Normal": {
+        "count": 935275,
+        "recall": 1.0,
+        "unreliable": false
+      },
+      "Reconnaissance": {
+        "count": 7289,
+        "recall": 1.0,
+        "unreliable": false
+      },
+      "Shellcode": {
+        "count": 1229,
+        "recall": 1.0,
+        "unreliable": false
+      },
+      "Worms": {
+        "count": 140,
+        "recall": 1.0,
+        "unreliable": false
+      }
+    },
+    "dos_analysis_backdoor_confusion": {
+      "DoS": {
+        "total": 3747,
+        "flagged": 3747,
+        "missed": 0,
+        "recall": 1.0
+      },
+      "Analysis": {
+        "total": 538,
+        "flagged": 538,
+        "missed": 0,
+        "recall": 1.0
+      },
+      "Backdoor": {
+        "total": 380,
+        "flagged": 380,
+        "missed": 0,
+        "recall": 1.0
+      }
+    },
+    "top_features": {
+      "sttl": 0.25495173082127054,
+      "ct_state_ttl": 0.21743880930609985,
+      "dload": 0.11542965435261475,
+      "tcprtt": 0.06329793601306283,
+      "dttl": 0.056194263908351534,
+      "ackdat": 0.050601818641168146,
+      "dmeansz": 0.04768502198514471,
+      "synack": 0.045952367002689384,
+      "dbytes": 0.026811747811688602,
+      "dpkts": 0.022041979353213677,
+      "dintpkt": 0.01851148074472604,
+      "state_enc": 0.012435231618330761,
+      "sjit": 0.01226144672406572,
+      "sintpkt": 0.009604183391667905,
+      "spkts": 0.009398322710897878
+    }
+  },
+  "S1_to_S0": {
+    "calibrated_threshold": 0.8088688315329753,
+    "accuracy": 0.9971367455260417,
+    "precision": 0.8632707774798928,
+    "recall": 0.8967845387796438,
+    "f1": 0.8797085851477772,
+    "roc_auc": 0.999567710723484,
+    "pr_auc": 0.9646564904200764,
+    "fpr": 0.0016778322765881087,
+    "alerts_per_hour": 977.1848192824223,
+    "tp": 10626,
+    "fp": 1683,
+    "tn": 1001397,
+    "fn": 1223,
+    "test_duration_hours": 12.596388888888889,
+    "rf_train_time_s": 47.44168758392334,
+    "scoring_time_s": 2.7748165130615234,
+    "per_class_recall": {
+      "Analysis": {
+        "count": 270,
+        "recall": 0.8407407407407408,
+        "unreliable": false
+      },
+      "Backdoor": {
+        "count": 61,
+        "recall": 0.9836065573770492,
+        "unreliable": false
+      },
+      "DoS": {
+        "count": 563,
+        "recall": 0.9591474245115453,
+        "unreliable": false
+      },
+      "Exploits": {
+        "count": 3783,
+        "recall": 0.9812318265926513,
+        "unreliable": false
+      },
+      "Fuzzers": {
+        "count": 3662,
+        "recall": 0.7113599126160568,
+        "unreliable": false
+      },
+      "Generic": {
+        "count": 1885,
+        "recall": 0.9984084880636604,
+        "unreliable": false
+      },
+      "Normal": {
+        "count": 1003080,
+        "recall": 0.0016778322765881087,
+        "unreliable": false
+      },
+      "Reconnaissance": {
+        "count": 1379,
+        "recall": 0.9876722262509064,
+        "unreliable": false
+      },
+      "Shellcode": {
+        "count": 222,
+        "recall": 0.9684684684684685,
+        "unreliable": false
+      },
+      "Worms": {
+        "count": 24,
+        "recall": 0.9583333333333334,
+        "unreliable": true
+      }
+    },
+    "dos_analysis_backdoor_confusion": {
+      "DoS": {
+        "total": 563,
+        "flagged": 540,
+        "missed": 23,
+        "recall": 0.9591474245115453
+      },
+      "Analysis": {
+        "total": 270,
+        "flagged": 227,
+        "missed": 43,
+        "recall": 0.8407407407407408
+      },
+      "Backdoor": {
+        "total": 61,
+        "flagged": 60,
+        "missed": 1,
+        "recall": 0.9836065573770492
+      }
+    },
+    "top_features": {
+      "sttl": 0.23512787663714083,
+      "ct_state_ttl": 0.21196192715085233,
+      "dload": 0.10621207896126278,
+      "tcprtt": 0.06350808730922887,
+      "ackdat": 0.05759632311549754,
+      "dttl": 0.053970919892639954,
+      "dmeansz": 0.049871966378831824,
+      "dbytes": 0.04342914333615299,
+      "synack": 0.03607751917327485,
+      "dpkts": 0.02492572571342958,
+      "dintpkt": 0.019870147004134402,
+      "sintpkt": 0.014665263824260942,
+      "state_enc": 0.014118156365613968,
+      "sjit": 0.00884918801900277,
+      "ct_dst_src_ltm": 0.007445942809902986
+    }
+  },
+  "performance": {
+    "peak_memory_mb": 83.1015625,
+    "total_runtime_s": 150.48082852363586
+  }
+}

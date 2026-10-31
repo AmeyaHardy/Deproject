@@ -34,6 +34,22 @@ import shutil
 import time
 from pathlib import Path
 
+# Pre-configure Windows Hadoop and Java environments before JVM initialization
+USER_PROFILE = os.environ.get("USERPROFILE", r"C:\Users\sweni")
+hadoop_home = Path(USER_PROFILE) / "hadoop"
+if hadoop_home.exists():
+    os.environ["HADOOP_HOME"] = str(hadoop_home)
+    hadoop_bin = str(hadoop_home / "bin")
+    if hadoop_bin not in os.environ.get("PATH", ""):
+        os.environ["PATH"] = hadoop_bin + os.pathsep + os.environ.get("PATH", "")
+
+default_java = Path(r"C:\Program Files\Java\jre1.8.0_461")
+if default_java.exists() and "JAVA_HOME" not in os.environ:
+    os.environ["JAVA_HOME"] = str(default_java)
+
+os.environ["PYSPARK_PYTHON"] = sys.executable
+os.environ["PYSPARK_DRIVER_PYTHON"] = sys.executable
+
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
 from pyspark.sql.types import (
@@ -42,6 +58,7 @@ from pyspark.sql.types import (
     StringType,
     IntegerType,
     DoubleType,
+    LongType,
 )
 
 # ── Configuration Defaults ───────────────────────────────────────────────────
@@ -103,6 +120,19 @@ features_schema = StructType([
     StructField("ct_src_ltm",         DoubleType()),
     StructField("ct_srv_dst",         DoubleType()),
     StructField("is_sm_ips_ports",    DoubleType()),
+    # Support alternate naming in raw 49-column files
+    StructField("smeansz",            DoubleType()),
+    StructField("dmeansz",            DoubleType()),
+    StructField("res_bdy_len",        DoubleType()),
+])
+
+context_schema = StructType([
+    StructField("srcip",  StringType()),
+    StructField("sport",  IntegerType()),
+    StructField("dstip",  StringType()),
+    StructField("dsport", IntegerType()),
+    StructField("stime",  LongType()),
+    StructField("ltime",  LongType()),
 ])
 
 evaluation_schema = StructType([
@@ -111,10 +141,12 @@ evaluation_schema = StructType([
 ])
 
 message_schema = StructType([
-    StructField("record_id",  StringType()),
-    StructField("event_time", StringType()),
-    StructField("features",   features_schema),
-    StructField("evaluation", evaluation_schema),
+    StructField("record_id",   StringType()),
+    StructField("event_time",  StringType()),
+    StructField("ingest_time", StringType()),
+    StructField("context",     context_schema),
+    StructField("features",    features_schema),
+    StructField("evaluation",  evaluation_schema),
 ])
 
 
@@ -188,14 +220,17 @@ def main():
             sys.exit(1)
 
     # ── Guard: HADOOP_HOME (Required for Spark on Windows) ──────────────
-    if not os.environ.get("HADOOP_HOME"):
+    hadoop_home = os.environ.get("HADOOP_HOME")
+    if not hadoop_home:
         default_hadoop = Path(os.environ.get("USERPROFILE", "")) / "hadoop"
         if default_hadoop.exists():
-            os.environ["HADOOP_HOME"] = str(default_hadoop)
-            bin_dir = str(default_hadoop / "bin")
-            if bin_dir not in os.environ.get("PATH", ""):
-                os.environ["PATH"] = f"{bin_dir};{os.environ.get('PATH', '')}"
-            print(f"INFO: HADOOP_HOME auto-set to: {os.environ['HADOOP_HOME']}")
+            hadoop_home = str(default_hadoop)
+            os.environ["HADOOP_HOME"] = hadoop_home
+            print(f"INFO: HADOOP_HOME auto-set to: {hadoop_home}")
+    
+    hadoop_bin = str(Path(hadoop_home) / "bin") if hadoop_home else ""
+    if hadoop_bin and hadoop_bin not in os.environ.get("PATH", ""):
+        os.environ["PATH"] = f"{hadoop_bin};{os.environ.get('PATH', '')}"
 
     # ── Build Spark session ─────────────────────────────────────────────
     # The Kafka connector JAR is not bundled with PySpark.
@@ -222,6 +257,13 @@ def main():
             "org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.5",
         )
         .config("spark.sql.shuffle.partitions", str(args.shuffle_partitions))
+        # Use FileSystemBasedCheckpointFileManager and java.library.path to prevent Windows NativeIO errors
+        .config(
+            "spark.sql.streaming.checkpointFileManagerClass",
+            "org.apache.spark.sql.execution.streaming.FileSystemBasedCheckpointFileManager",
+        )
+        .config("spark.driver.extraJavaOptions", f"-Djava.library.path={hadoop_bin}")
+        .config("spark.executor.extraJavaOptions", f"-Djava.library.path={hadoop_bin}")
         # Reduce noisy log output
         .config("spark.ui.showConsoleProgress", "false")
     )
@@ -231,6 +273,15 @@ def main():
         builder = builder.config("spark.local.dir", str(d_temp.resolve()))
 
     spark = builder.getOrCreate()
+
+    # Explicitly load hadoop.dll to avoid Windows NativeIO.access0 UnsatisfiedLinkError
+    if os.name == "nt" and hadoop_bin:
+        hadoop_dll = Path(hadoop_bin) / "hadoop.dll"
+        if hadoop_dll.exists():
+            try:
+                spark.sparkContext._jvm.java.lang.System.load(str(hadoop_dll.resolve()))
+            except Exception:
+                pass
 
     # Lower Spark's own log verbosity (keep WARN and above)
     spark.sparkContext.setLogLevel("WARN")
@@ -266,6 +317,8 @@ def main():
         .filter(F.col("data").isNotNull())
         .select(
             F.col("data.record_id").alias("record_id"),
+            # Context fields
+            F.col("data.context.srcip").alias("srcip"),
             # Parse the ISO-8601 event_time string into a proper timestamp
             F.to_timestamp(F.col("data.event_time")).alias("event_time"),
             # Traffic metrics we'll aggregate

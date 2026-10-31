@@ -1,0 +1,118 @@
+{
+  "window_seconds": 5,
+  "flow_to_window_rule": "window_id = ((stime - min_time) // 5)",
+  "window_label_definition": "A window is positive (attack) if sum(label == 1) > 0; a window is pure normal if sum(label == 1) == 0.",
+  "subsets": {
+    "Session_0": {
+      "total_windows": 868,
+      "pure_normal_windows": 471,
+      "mixed_windows": 397,
+      "pure_attack_windows": 0,
+      "any_attack_windows": 397,
+      "mixed_window_pct": 45.73732718894009,
+      "k_evaluations": {
+        "k_1": {
+          "k": 1,
+          "false_alarms": 0,
+          "normal_windows": 471,
+          "window_far": 0.0,
+          "detected_attack_windows": 397,
+          "attack_windows": 397,
+          "detection_rate": 1.0
+        },
+        "k_3": {
+          "k": 3,
+          "false_alarms": 0,
+          "normal_windows": 471,
+          "window_far": 0.0,
+          "detected_attack_windows": 395,
+          "attack_windows": 397,
+          "detection_rate": 0.9949622166246851
+        },
+        "k_5": {
+          "k": 5,
+          "false_alarms": 0,
+          "normal_windows": 471,
+          "window_far": 0.0,
+          "detected_attack_windows": 373,
+          "attack_windows": 397,
+          "detection_rate": 0.9395465994962217
+        }
+      }
+    },
+    "Session_1": {
+      "total_windows": 539,
+      "pure_normal_windows": 9,
+      "mixed_windows": 529,
+      "pure_attack_windows": 1,
+      "any_attack_windows": 530,
+      "mixed_window_pct": 98.14471243042672,
+      "k_evaluations": {
+        "k_1": {
+          "k": 1,
+          "false_alarms": 1,
+          "normal_windows": 9,
+          "window_far": 0.1111111111111111,
+          "detected_attack_windows": 530,
+          "attack_windows": 530,
+          "detection_rate": 1.0
+        },
+        "k_3": {
+          "k": 3,
+          "false_alarms": 0,
+          "normal_windows": 9,
+          "window_far": 0.0,
+          "detected_attack_windows": 528,
+          "attack_windows": 530,
+          "detection_rate": 0.9962264150943396
+        },
+        "k_5": {
+          "k": 5,
+          "false_alarms": 0,
+          "normal_windows": 9,
+          "window_far": 0.0,
+          "detected_attack_windows": 498,
+          "attack_windows": 530,
+          "detection_rate": 0.939622641509434
+        }
+      }
+    },
+    "Combined": {
+      "total_windows": 1406,
+      "pure_normal_windows": 479,
+      "mixed_windows": 926,
+      "pure_attack_windows": 1,
+      "any_attack_windows": 927,
+      "mixed_window_pct": 65.8605974395448,
+      "k_evaluations": {
+        "k_1": {
+          "k": 1,
+          "false_alarms": 0,
+          "normal_windows": 479,
+          "window_far": 0.0,
+          "detected_attack_windows": 927,
+          "attack_windows": 927,
+          "detection_rate": 1.0
+        },
+        "k_3": {
+          "k": 3,
+          "false_alarms": 0,
+          "normal_windows": 479,
+          "window_far": 0.0,
+          "detected_attack_windows": 924,
+          "attack_windows": 927,
+          "detection_rate": 0.9967637540453075
+        },
+        "k_5": {
+          "k": 5,
+          "false_alarms": 0,
+          "normal_windows": 479,
+          "window_far": 0.0,
+          "detected_attack_windows": 870,
+          "attack_windows": 927,
+          "detection_rate": 0.9385113268608414
+        }
+      }
+    }
+  }
+}

@@ -24,7 +24,7 @@ To test this hypothesis rigorously, we conducted an empirical benchmark across *
 - **Java Runtime**: Oracle JRE 1.8.0_461
 - **PySpark**: 3.5.5 with Hadoop 3.3.6 native Windows binaries (`winutils.exe` & `hadoop.dll`)
 - **Kafka**: Confluent cp-kafka:7.7.0 (Single broker, `localhost:9092`)
-- **Dataset**: UNSW-NB15 training dataset (`UNSW_NB15_training-set.csv`, 175,342 rows)
+- **Dataset**: UNSW-NB15 dataset (`UNSW_NB15_training-set.csv`, 82,332 rows offline slice used for initial streaming engine benchmarking)
 
 ### Controlled Constants Across All Experiments
 To ensure a scientific, unbiased test where the **only** variables were shuffle partitions and workload size:

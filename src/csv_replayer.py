@@ -25,6 +25,10 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
+ROOT_DIR = Path(__file__).resolve().parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
 # ── Constants ────────────────────────────────────────────────────────────────
 
 DEFAULT_INPUT = (
@@ -147,9 +151,12 @@ class KafkaSink:
             sys.exit(1)
 
     def send(self, record: dict):
-        # Use record_id as the Kafka message key for partitioning
-        key = str(record.get("record_id", ""))
-        self._producer.send(self.topic, key=key, value=record)
+        # Use srcip as Kafka message key for per-source partition ordering
+        key = record.get("context", {}).get("srcip") or str(record.get("record_id", ""))
+        timestamp_ms = None
+        if "context" in record and "stime" in record["context"]:
+            timestamp_ms = int(record["context"]["stime"] * 1000)
+        self._producer.send(self.topic, key=key, value=record, timestamp_ms=timestamp_ms)
 
     def close(self):
         if self._producer:
@@ -207,11 +214,16 @@ def main():
         default=DEFAULT_KAFKA_TOPIC,
         help=f"Kafka topic name (default: {DEFAULT_KAFKA_TOPIC}).",
     )
+    parser.add_argument(
+        "--raw",
+        action="store_true",
+        help="Replay canonical 49-column raw CSV dataset (UNSW-NB15_1..4.csv) instead of legacy training set.",
+    )
 
     args = parser.parse_args()
 
     # ── Validate input ───────────────────────────────────────────────────
-    if not args.input.exists():
+    if not args.raw and not args.input.exists():
         print(f"ERROR: Input file not found: {args.input}", file=sys.stderr)
         sys.exit(1)
 
@@ -228,7 +240,8 @@ def main():
         sink = FileSink(path=args.output)
 
     # ── Replay loop ──────────────────────────────────────────────────────
-    print(f"Input  : {args.input}")
+    source_name = "Canonical 49-column Raw Stream (UNSW-NB15_1..4.csv)" if args.raw else str(args.input)
+    print(f"Input  : {source_name}")
     print(f"Rate   : {args.rate} records/sec (delay {delay:.4f}s)")
     if args.limit is not None:
         print(f"Limit  : {args.limit} records")
@@ -240,38 +253,45 @@ def main():
     start_wall = time.monotonic()
 
     try:
-        with args.input.open("r", encoding="utf-8-sig", newline="") as fin:
-            reader = csv.DictReader(fin)
-            fieldnames = reader.fieldnames
-
-            if fieldnames is None:
-                print("ERROR: Could not read CSV header.", file=sys.stderr)
-                sys.exit(1)
-
-            # Sanity check: confirm expected columns are present
-            missing = EXCLUDE_FROM_FEATURES - set(fieldnames)
-            if missing:
-                print(
-                    f"WARNING: Expected columns missing from CSV: {missing}",
-                    file=sys.stderr,
-                )
-
-            for row in reader:
-                record = build_record(row, fieldnames)
+        if args.raw:
+            from src.raw_loader import iter_raw_records
+            for record in iter_raw_records(limit=args.limit):
                 sink.send(record)
-
                 emitted += 1
                 if emitted <= 5 or emitted % 10 == 0:
+                    srcip = record["context"]["srcip"]
                     print(
-                        f"  [{emitted:>6}] id={record['record_id']:>6}  "
+                        f"  [{emitted:>6}] id={record['record_id']:>8}  "
+                        f"srcip={srcip:<15}  "
                         f"label={record['evaluation']['label']}  "
                         f"attack_cat={record['evaluation']['attack_cat']}"
                     )
-
-                if args.limit is not None and emitted >= args.limit:
-                    break
-
                 time.sleep(delay)
+        else:
+            with args.input.open("r", encoding="utf-8-sig", newline="") as fin:
+                reader = csv.DictReader(fin)
+                fieldnames = reader.fieldnames
+
+                if fieldnames is None:
+                    print("ERROR: Could not read CSV header.", file=sys.stderr)
+                    sys.exit(1)
+
+                for row in reader:
+                    record = build_record(row, fieldnames)
+                    sink.send(record)
+
+                    emitted += 1
+                    if emitted <= 5 or emitted % 10 == 0:
+                        print(
+                            f"  [{emitted:>6}] id={record['record_id']:>6}  "
+                            f"label={record['evaluation']['label']}  "
+                            f"attack_cat={record['evaluation']['attack_cat']}"
+                        )
+
+                    if args.limit is not None and emitted >= args.limit:
+                        break
+
+                    time.sleep(delay)
 
     except KeyboardInterrupt:
         print("\n\nInterrupted by user.")
