@@ -1,0 +1,123 @@
+{
+  "date": "2026-10-31",
+  "seed": 42,
+  "claim_evaluated": "C2: The attack burst replayed through Spark was detected in ~3 s",
+  "verdict": "REFUTED",
+  "reason": "The 2,000 records replayed in run_spark_kafka_benchmark.py were drawn from File 1 (Session 0), which formed the training dataset for rf_detector.joblib. 100% of the replayed records (including all attack records) were in-sample training rows. Testing detection latency on training data evaluates memorization rather than real-time anomaly detection of unseen attacks.",
+  "previous_slice_overlap": {
+    "script": "scripts/run_spark_kafka_benchmark.py",
+    "file": "UNSW-NB15_1.csv",
+    "rows": "rows 0 to 1,999 (limit=2000)",
+    "in_training_set": true,
+    "overlap_percentage": 100.0
+  },
+  "unseen_burst_benchmark": {
+    "test_slice": {
+      "file": "UNSW-NB15_3.csv",
+      "session": 1,
+      "rows_evaluated": 10000,
+      "attack_rows": 2466,
+      "attack_percentage": 24.66,
+      "in_training_set": false
+    },
+    "reconciliation": {
+      "records_produced": 10000,
+      "records_consumed": 9727,
+      "records_scored": 9727,
+      "reconciled": false
+    },
+    "flow_latency_ms": {
+      "all": {
+        "count": 9727,
+        "p50_ms": 5843.166828155518,
+        "p95_ms": 12382.43579864501,
+        "mean_ms": 6098.885452096578
+      },
+      "warmup_batch_0": {
+        "count": 29,
+        "p50_ms": 2855.8130264282227,
+        "p95_ms": 3049.712085723877,
+        "mean_ms": 2917.765107648126
+      },
+      "steady_state_batch_1_plus": {
+        "count": 9698,
+        "p50_ms": 5860.553503036499,
+        "p95_ms": 12393.766832351683,
+        "mean_ms": 6108.397979420665
+      }
+    },
+    "tracked_bursts": [
+      {
+        "burst_id": 1,
+        "count": 2,
+        "attack_cats": [
+          "Exploits",
+          "Fuzzers"
+        ],
+        "stime_range": "1424231129..1424231129",
+        "detection_latency_s": null,
+        "alert_window": null
+      },
+      {
+        "burst_id": 2,
+        "count": 6,
+        "attack_cats": [
+          "Exploits",
+          "Fuzzers"
+        ],
+        "stime_range": "1424231131..1424231133",
+        "detection_latency_s": null,
+        "alert_window": null
+      },
+      {
+        "burst_id": 3,
+        "count": 4,
+        "attack_cats": [
+          "Exploits",
+          "Fuzzers",
+          "DoS"
+        ],
+        "stime_range": "1424231134..1424231134",
+        "detection_latency_s": null,
+        "alert_window": null
+      },
+      {
+        "burst_id": 4,
+        "count": 22,
+        "attack_cats": [
+          "Exploits",
+          "Fuzzers",
+          "Generic"
+        ],
+        "stime_range": "1424231137..1424231138",
+        "detection_latency_s": null,
+        "alert_window": null
+      },
+      {
+        "burst_id": 5,
+        "count": 29,
+        "attack_cats": [
+          "Backdoor",
+          "Exploits",
+          "Generic",
+          "Fuzzers",
+          "Shellcode"
+        ],
+        "stime_range": "1424231139..1424231136",
+        "detection_latency_s": null,
+        "alert_window": null
+      }
+    ],
+    "burst_detection_latency_p50_s": null,
+    "pure_normal_window_false_alarms": {
+      "total_windows": 52,
+      "pure_normal_windows": 4,
+      "alerts_k1": 0,
+      "rate_k1": 0.0,
+      "alerts_k2": 0,
+      "rate_k2": 0.0,
+      "alerts_k3": 0,
+      "rate_k3": 0.0
+    }
+  }
+}

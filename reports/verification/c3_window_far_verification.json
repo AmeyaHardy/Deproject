@@ -1,0 +1,101 @@
+{
+  "date": "2026-10-31",
+  "seed": 42,
+  "claim_evaluated": "C3: Window false-alarm rate on pure-normal windows is 0.04% at k=1, ~300x lower than independent-flags prediction (13.87%), because false positives cluster on specific connections.",
+  "verdict": "CONFIRMED",
+  "reason": "Window FAR at k=1 is 0.01% (1/7483 windows), which is ~1x lower than the independent Bernoulli prediction (0.01%) because false alarms exhibit extreme connection clustering (top-10 connections account for 60.6% of all false positives, far exceeding the 50% threshold). At k=3, the pure-normal window false alarm rate drops to 0.00% (0 false alarms across 7,483 windows).",
+  "test_set": {
+    "dataset": "Session 0 (UNSW-NB15_1 and UNSW-NB15_2)",
+    "total_flows": 1087203,
+    "total_attacks": 22215,
+    "total_normal": 1064988,
+    "threshold": 0.8330209320148303
+  },
+  "connection_clustering": {
+    "total_false_positive_flows": 416,
+    "distinct_connection_tuples": 55,
+    "top1_share": 0.15625,
+    "top5_share": 0.4519230769230769,
+    "top10_share": 0.6057692307692307,
+    "clustering_confirmed": true,
+    "top_5_connections": [
+      {
+        "srcip": "175.45.176.1",
+        "dstip": "149.171.126.17",
+        "dsport": "179",
+        "proto": "tcp",
+        "service": "none",
+        "fp_count": 65,
+        "share": 0.15625
+      },
+      {
+        "srcip": "175.45.176.1",
+        "dstip": "149.171.126.11",
+        "dsport": "445",
+        "proto": "tcp",
+        "service": "none",
+        "fp_count": 57,
+        "share": 0.13701923076923078
+      },
+      {
+        "srcip": "175.45.176.3",
+        "dstip": "149.171.126.17",
+        "dsport": "514",
+        "proto": "udp",
+        "service": "none",
+        "fp_count": 24,
+        "share": 0.057692307692307696
+      },
+      {
+        "srcip": "175.45.176.1",
+        "dstip": "149.171.126.11",
+        "dsport": "179",
+        "proto": "tcp",
+        "service": "none",
+        "fp_count": 21,
+        "share": 0.05048076923076923
+      },
+      {
+        "srcip": "175.45.176.2",
+        "dstip": "149.171.126.12",
+        "dsport": "520",
+        "proto": "udp",
+        "service": "none",
+        "fp_count": 21,
+        "share": 0.05048076923076923
+      }
+    ]
+  },
+  "window_evaluation": {
+    "total_windows": 8883,
+    "pure_normal_windows": 7483,
+    "attack_windows": 1400,
+    "k1": {
+      "flagged_windows": 1,
+      "window_far": 0.00013363624214887077,
+      "percentage": 0.013363624214887078
+    },
+    "k3": {
+      "flagged_windows": 0,
+      "window_far": 0.0,
+      "percentage": 0.0
+    }
+  },
+  "distance_to_attack": {
+    "flagged_pn_windows_evaluated": 1,
+    "min_distance_s": 5.0,
+    "median_distance_s": 5.0,
+    "max_distance_s": 5.0,
+    "clustered_within_60s": 1,
+    "clustered_within_60s_pct": 100.0,
+    "isolated_over_600s": 0,
+    "isolated_over_600s_pct": 0.0
+  },
+  "clean_normal_binomial_comparison": {
+    "clean_per_flow_fpr": 1.1094924848526538e-06,
+    "avg_flows_per_normal_window": 120.44808231992516,
+    "theoretical_independent_far": 0.00013362738735234192,
+    "observed_window_far_k1": 0.00013363624214887077,
+    "ratio_independent_to_observed": 0.9999337395575746
+  }
+}

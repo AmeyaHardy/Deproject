@@ -1,0 +1,242 @@
+{
+  "timestamp": "2026-11-01T17:31:20.106523+00:00",
+  "date": "2026-11-01",
+  "seed": 42,
+  "slice": {
+    "file": "UNSW-NB15_3.csv",
+    "session": 1,
+    "is_unseen": true,
+    "limit": 10000,
+    "attacks": 2466,
+    "attack_pct": 24.66,
+    "total_bursts": 136
+  },
+  "configuration": {
+    "threshold": 0.8243745741878048,
+    "alert_k": 3,
+    "watermark": "60 seconds",
+    "shuffle_partitions": 2,
+    "timezone": "UTC"
+  },
+  "rates": {
+    "rate_25": {
+      "rate_rec_s": 25,
+      "topic": "anomaly-c2b-r25-20261101_224502",
+      "reconciliation": {
+        "produced": 10000,
+        "consumed": 9758,
+        "scored": 9758,
+        "reconciled": false
+      },
+      "flow_evaluation": {
+        "tp": 2316,
+        "fp": 137,
+        "fn": 70,
+        "tn": 7235,
+        "recall": 0.9706621961441744,
+        "precision": 0.9441500203832043,
+        "fpr": 0.018583830710797614
+      },
+      "flow_processing_latency_ms": {
+        "overall": {
+          "count": 9758,
+          "p50_ms": 10444.661736488342,
+          "p95_ms": 16932.892501354214,
+          "mean_ms": 10896.831945895074
+        },
+        "warmup_batch_0": {
+          "count": 29,
+          "p50_ms": 14974.479675292969,
+          "p95_ms": 15468.16143989563,
+          "mean_ms": 14979.367025967302
+        },
+        "steady_state_batch_1_plus": {
+          "count": 9729,
+          "p50_ms": 10434.573888778687,
+          "p95_ms": 16942.541599273685,
+          "mean_ms": 10884.662810596266
+        }
+      },
+      "burst_detection": {
+        "total_bursts": 136,
+        "detected_bursts": 133,
+        "detection_rate": 0.9779411764705882,
+        "detection_latency_p50_s": 0.0,
+        "detection_latency_p95_s": 5.323374462127684
+      },
+      "window_evaluation": {
+        "total_windows": 52,
+        "attack_windows": 48,
+        "attack_windows_alerted_k3": 47,
+        "attack_window_alert_rate": 0.9791666666666666,
+        "pure_normal_windows": 4,
+        "pure_normal_alerts_k1": 0,
+        "pure_normal_far_k1": 0.0,
+        "pure_normal_alerts_k2": 0,
+        "pure_normal_far_k2": 0.0,
+        "pure_normal_alerts_k3": 0,
+        "pure_normal_far_k3": 0.0
+      },
+      "microbatch_performance": {
+        "total_batches": 57,
+        "batch_duration_mean_ms": 6778.0893685524925,
+        "batch_duration_p50_ms": 6472.194194793701,
+        "batch_duration_p95_ms": 9950.032711029053,
+        "batch_duration_max_ms": 12662.920951843262,
+        "batches_exceeding_5s": 53,
+        "sustained_rec_per_sec": 24.27286208434573
+      },
+      "watermark_drops": {
+        "watermark": "60 seconds",
+        "dropped_flows": 0,
+        "drop_percentage": 0.0
+      }
+    },
+    "rate_50": {
+      "rate_rec_s": 50,
+      "topic": "anomaly-c2b-r50-20261101_225313",
+      "reconciliation": {
+        "produced": 10000,
+        "consumed": 9955,
+        "scored": 9955,
+        "reconciled": false
+      },
+      "flow_evaluation": {
+        "tp": 2396,
+        "fp": 136,
+        "fn": 70,
+        "tn": 7353,
+        "recall": 0.9716139497161395,
+        "precision": 0.9462875197472354,
+        "fpr": 0.01815996795299773
+      },
+      "flow_processing_latency_ms": {
+        "overall": {
+          "count": 9955,
+          "p50_ms": 11352.170467376709,
+          "p95_ms": 17819.104504585266,
+          "mean_ms": 11636.661741136008
+        },
+        "warmup_batch_0": {
+          "count": 0,
+          "p50_ms": 0.0,
+          "p95_ms": 0.0,
+          "mean_ms": 0.0
+        },
+        "steady_state_batch_1_plus": {
+          "count": 9955,
+          "p50_ms": 11352.170467376709,
+          "p95_ms": 17819.104504585266,
+          "mean_ms": 11636.661741136008
+        }
+      },
+      "burst_detection": {
+        "total_bursts": 136,
+        "detected_bursts": 131,
+        "detection_rate": 0.9632352941176471,
+        "detection_latency_p50_s": 1.1498427391052246,
+        "detection_latency_p95_s": 5.9740341901779175
+      },
+      "window_evaluation": {
+        "total_windows": 52,
+        "attack_windows": 47,
+        "attack_windows_alerted_k3": 46,
+        "attack_window_alert_rate": 0.9787234042553191,
+        "pure_normal_windows": 5,
+        "pure_normal_alerts_k1": 0,
+        "pure_normal_far_k1": 0.0,
+        "pure_normal_alerts_k2": 0,
+        "pure_normal_far_k2": 0.0,
+        "pure_normal_alerts_k3": 0,
+        "pure_normal_far_k3": 0.0
+      },
+      "microbatch_performance": {
+        "total_batches": 29,
+        "batch_duration_mean_ms": 7067.727689085335,
+        "batch_duration_p50_ms": 6685.049533843994,
+        "batch_duration_p95_ms": 10302.813243865967,
+        "batch_duration_max_ms": 10710.623741149902,
+        "batches_exceeding_5s": 28,
+        "sustained_rec_per_sec": 49.281957532218335
+      },
+      "watermark_drops": {
+        "watermark": "60 seconds",
+        "dropped_flows": 209,
+        "drop_percentage": 2.0994475138121547
+      }
+    },
+    "rate_100": {
+      "rate_rec_s": 100,
+      "topic": "anomaly-c2b-r100-20261101_225807",
+      "reconciliation": {
+        "produced": 10000,
+        "consumed": 9886,
+        "scored": 9886,
+        "reconciled": false
+      },
+      "flow_evaluation": {
+        "tp": 2355,
+        "fp": 137,
+        "fn": 70,
+        "tn": 7324,
+        "recall": 0.9711340206185567,
+        "precision": 0.945024077046549,
+        "fpr": 0.018362149845865164
+      },
+      "flow_processing_latency_ms": {
+        "overall": {
+          "count": 9886,
+          "p50_ms": 11234.840750694275,
+          "p95_ms": 14898.82093667984,
+          "mean_ms": 11266.552391742951
+        },
+        "warmup_batch_0": {
+          "count": 0,
+          "p50_ms": 0.0,
+          "p95_ms": 0.0,
+          "mean_ms": 0.0
+        },
+        "steady_state_batch_1_plus": {
+          "count": 9886,
+          "p50_ms": 11234.840750694275,
+          "p95_ms": 14898.82093667984,
+          "mean_ms": 11266.552391742951
+        }
+      },
+      "burst_detection": {
+        "total_bursts": 136,
+        "detected_bursts": 133,
+        "detection_rate": 0.9779411764705882,
+        "detection_latency_p50_s": 2.7558045387268066,
+        "detection_latency_p95_s": 7.690884351730345
+      },
+      "window_evaluation": {
+        "total_windows": 52,
+        "attack_windows": 48,
+        "attack_windows_alerted_k3": 47,
+        "attack_window_alert_rate": 0.9791666666666666,
+        "pure_normal_windows": 4,
+        "pure_normal_alerts_k1": 0,
+        "pure_normal_far_k1": 0.0,
+        "pure_normal_alerts_k2": 0,
+        "pure_normal_far_k2": 0.0,
+        "pure_normal_alerts_k3": 0,
+        "pure_normal_far_k3": 0.0
+      },
+      "microbatch_performance": {
+        "total_batches": 16,
+        "batch_duration_mean_ms": 6811.955347657204,
+        "batch_duration_p50_ms": 7146.382689476013,
+        "batch_duration_p95_ms": 7792.642116546631,
+        "batch_duration_max_ms": 7944.960117340088,
+        "batches_exceeding_5s": 15,
+        "sustained_rec_per_sec": 96.91134015566371
+      },
+      "watermark_drops": {
+        "watermark": "60 seconds",
+        "dropped_flows": 264,
+        "drop_percentage": 2.670443050778879
+      }
+    }
+  }
+}

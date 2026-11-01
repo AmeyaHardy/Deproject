@@ -1,0 +1,335 @@
+{
+  "file_results": {
+    "UNSW-NB15_1.csv": {
+      "stime": {
+        "total_rows": 700001,
+        "pairwise_inversions": 107672,
+        "pairwise_inversion_pct": 15.381692311868125,
+        "ooo_rows": 161070,
+        "ooo_pct": 23.00996712861839,
+        "lateness_percentiles": {
+          "p50": 1.0,
+          "p90": 8.0,
+          "p99": 50.0,
+          "p99_9": 59.0,
+          "max": 8896.0
+        },
+        "watermark_drops": {
+          "10s": {
+            "dropped_count": 12859,
+            "dropped_pct": 1.8369973757180347
+          },
+          "30s": {
+            "dropped_count": 5714,
+            "dropped_pct": 0.8162845481649312
+          },
+          "60s": {
+            "dropped_count": 36,
+            "dropped_pct": 0.005142849795928862
+          },
+          "300s": {
+            "dropped_count": 18,
+            "dropped_pct": 0.002571424897964431
+          }
+        }
+      },
+      "ltime": {
+        "total_rows": 700001,
+        "pairwise_inversions": 0,
+        "pairwise_inversion_pct": 0.0,
+        "ooo_rows": 0,
+        "ooo_pct": 0.0,
+        "lateness_percentiles": {
+          "p50": 0.0,
+          "p90": 0.0,
+          "p99": 0.0,
+          "p99_9": 0.0,
+          "max": 0.0
+        },
+        "watermark_drops": {
+          "10s": {
+            "dropped_count": 0,
+            "dropped_pct": 0.0
+          },
+          "30s": {
+            "dropped_count": 0,
+            "dropped_pct": 0.0
+          },
+          "60s": {
+            "dropped_count": 0,
+            "dropped_pct": 0.0
+          },
+          "300s": {
+            "dropped_count": 0,
+            "dropped_pct": 0.0
+          }
+        }
+      }
+    },
+    "UNSW-NB15_2.csv": {
+      "stime": {
+        "total_rows": 700001,
+        "pairwise_inversions": 100934,
+        "pairwise_inversion_pct": 14.419122258396774,
+        "ooo_rows": 139110,
+        "ooo_pct": 19.872828753101782,
+        "lateness_percentiles": {
+          "p50": 1.0,
+          "p90": 5.0,
+          "p99": 50.0,
+          "p99_9": 60.0,
+          "max": 60.0
+        },
+        "watermark_drops": {
+          "10s": {
+            "dropped_count": 8119,
+            "dropped_pct": 1.1598554859207344
+          },
+          "30s": {
+            "dropped_count": 4170,
+            "dropped_pct": 0.5957134346950933
+          },
+          "60s": {
+            "dropped_count": 0,
+            "dropped_pct": 0.0
+          },
+          "300s": {
+            "dropped_count": 0,
+            "dropped_pct": 0.0
+          }
+        }
+      },
+      "ltime": {
+        "total_rows": 700001,
+        "pairwise_inversions": 0,
+        "pairwise_inversion_pct": 0.0,
+        "ooo_rows": 0,
+        "ooo_pct": 0.0,
+        "lateness_percentiles": {
+          "p50": 0.0,
+          "p90": 0.0,
+          "p99": 0.0,
+          "p99_9": 0.0,
+          "max": 0.0
+        },
+        "watermark_drops": {
+          "10s": {
+            "dropped_count": 0,
+            "dropped_pct": 0.0
+          },
+          "30s": {
+            "dropped_count": 0,
+            "dropped_pct": 0.0
+          },
+          "60s": {
+            "dropped_count": 0,
+            "dropped_pct": 0.0
+          },
+          "300s": {
+            "dropped_count": 0,
+            "dropped_pct": 0.0
+          }
+        }
+      }
+    },
+    "UNSW-NB15_3.csv": {
+      "stime": {
+        "total_rows": 700001,
+        "pairwise_inversions": 84935,
+        "pairwise_inversion_pct": 12.133554094922722,
+        "ooo_rows": 115955,
+        "ooo_pct": 16.564976335748092,
+        "lateness_percentiles": {
+          "p50": 1.0,
+          "p90": 5.0,
+          "p99": 50.0,
+          "p99_9": 60.0,
+          "max": 60.0
+        },
+        "watermark_drops": {
+          "10s": {
+            "dropped_count": 6891,
+            "dropped_pct": 0.9844271651040499
+          },
+          "30s": {
+            "dropped_count": 3220,
+            "dropped_pct": 0.4599993428580816
+          },
+          "60s": {
+            "dropped_count": 0,
+            "dropped_pct": 0.0
+          },
+          "300s": {
+            "dropped_count": 0,
+            "dropped_pct": 0.0
+          }
+        }
+      },
+      "ltime": {
+        "total_rows": 700001,
+        "pairwise_inversions": 0,
+        "pairwise_inversion_pct": 0.0,
+        "ooo_rows": 0,
+        "ooo_pct": 0.0,
+        "lateness_percentiles": {
+          "p50": 0.0,
+          "p90": 0.0,
+          "p99": 0.0,
+          "p99_9": 0.0,
+          "max": 0.0
+        },
+        "watermark_drops": {
+          "10s": {
+            "dropped_count": 0,
+            "dropped_pct": 0.0
+          },
+          "30s": {
+            "dropped_count": 0,
+            "dropped_pct": 0.0
+          },
+          "60s": {
+            "dropped_count": 0,
+            "dropped_pct": 0.0
+          },
+          "300s": {
+            "dropped_count": 0,
+            "dropped_pct": 0.0
+          }
+        }
+      }
+    },
+    "UNSW-NB15_4.csv": {
+      "stime": {
+        "total_rows": 440044,
+        "pairwise_inversions": 52290,
+        "pairwise_inversion_pct": 11.882902618829027,
+        "ooo_rows": 71652,
+        "ooo_pct": 16.282917162829172,
+        "lateness_percentiles": {
+          "p50": 1.0,
+          "p90": 5.0,
+          "p99": 52.0,
+          "p99_9": 60.0,
+          "max": 60.0
+        },
+        "watermark_drops": {
+          "10s": {
+            "dropped_count": 4303,
+            "dropped_pct": 0.9778567597785676
+          },
+          "30s": {
+            "dropped_count": 2229,
+            "dropped_pct": 0.5065402550654025
+          },
+          "60s": {
+            "dropped_count": 0,
+            "dropped_pct": 0.0
+          },
+          "300s": {
+            "dropped_count": 0,
+            "dropped_pct": 0.0
+          }
+        }
+      },
+      "ltime": {
+        "total_rows": 440044,
+        "pairwise_inversions": 0,
+        "pairwise_inversion_pct": 0.0,
+        "ooo_rows": 0,
+        "ooo_pct": 0.0,
+        "lateness_percentiles": {
+          "p50": 0.0,
+          "p90": 0.0,
+          "p99": 0.0,
+          "p99_9": 0.0,
+          "max": 0.0
+        },
+        "watermark_drops": {
+          "10s": {
+            "dropped_count": 0,
+            "dropped_pct": 0.0
+          },
+          "30s": {
+            "dropped_count": 0,
+            "dropped_pct": 0.0
+          },
+          "60s": {
+            "dropped_count": 0,
+            "dropped_pct": 0.0
+          },
+          "300s": {
+            "dropped_count": 0,
+            "dropped_pct": 0.0
+          }
+        }
+      }
+    }
+  },
+  "global_summary": {
+    "stime": {
+      "total_rows": 2540047,
+      "pairwise_inversions": 345831,
+      "pairwise_inversion_pct": 13.615141767061791,
+      "ooo_rows": 487787,
+      "ooo_pct": 19.203857251460306,
+      "lateness_percentiles": {
+        "p50": 1.0,
+        "p90": 6.0,
+        "p99": 50.0,
+        "p99_9": 60.0,
+        "max": 8896.0
+      },
+      "watermark_drops": {
+        "10s": {
+          "dropped_count": 32172,
+          "dropped_pct": 1.266590736313147
+        },
+        "30s": {
+          "dropped_count": 15333,
+          "dropped_pct": 0.6036502474166817
+        },
+        "60s": {
+          "dropped_count": 36,
+          "dropped_pct": 0.0014172966090784933
+        },
+        "300s": {
+          "dropped_count": 18,
+          "dropped_pct": 0.0007086483045392467
+        }
+      }
+    },
+    "ltime": {
+      "total_rows": 2540047,
+      "pairwise_inversions": 0,
+      "pairwise_inversion_pct": 0.0,
+      "ooo_rows": 0,
+      "ooo_pct": 0.0,
+      "lateness_percentiles": {
+        "p50": 0.0,
+        "p90": 0.0,
+        "p99": 0.0,
+        "p99_9": 0.0,
+        "max": 0.0
+      },
+      "watermark_drops": {
+        "10s": {
+          "dropped_count": 0,
+          "dropped_pct": 0.0
+        },
+        "30s": {
+          "dropped_count": 0,
+          "dropped_pct": 0.0
+        },
+        "60s": {
+          "dropped_count": 0,
+          "dropped_pct": 0.0
+        },
+        "300s": {
+          "dropped_count": 0,
+          "dropped_pct": 0.0
+        }
+      }
+    }
+  },
+  "peak_memory_mb": 80.93359375
+}

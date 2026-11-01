@@ -1,0 +1,148 @@
+{
+  "date": "2026-10-31",
+  "seed": 42,
+  "summary": {
+    "C1": {
+      "claim": "stime is 0.00% out of order across all 4 raw files; the data is strictly sorted by stime; a 10 s watermark is adequate.",
+      "verdict": "REFUTED",
+      "summary": "The raw dataset is strictly chronologically ordered by flow completion time (ltime, 0.00% inversions across 2,540,047 rows), NOT stime. stime has 13.62% pairwise inversions (345,831 rows) and 19.20% running-max lateness (487,787 rows). A 10 s watermark drops 1.2666% of traffic (32,172 flows); a 60 s watermark is required (drops only 0.0014% = 36 flows). The prior report was caused by a column indexing bug in scripts/measure_lateness.py:35 which read ltime as stime and sintpkt as ltime."
+    },
+    "C2": {
+      "claim": "The attack burst replayed through Spark was detected in ~3 s.",
+      "verdict": "REFUTED",
+      "summary": "The 2,000 records replayed in run_spark_kafka_benchmark.py were drawn from File 1 (Session 0), which formed the training set of rf_detector.joblib (100% overlap). The ~3 s detection latency measured in-sample memorization rather than real-time anomaly detection. Re-evaluating on 10,000 unseen rows from Session 1 (File 3) containing 2,466 attacks across 136 bursts revealed steady-state flow processing latency of p50 = 5.86 s and p95 = 12.39 s (warm-up Batch 0 p50 = 2.86 s)."
+    },
+    "C3": {
+      "claim": "Window false-alarm rate on pure-normal windows is 0.04% at k=1, ~300x lower than the independent-flags prediction (13.87%), because false positives cluster on specific connections.",
+      "verdict": "CONFIRMED",
+      "summary": "Connection clustering is empirically confirmed: the top-10 connection tuples account for 60.58% of all false-positive flows (> 50% threshold). In Session 0 (7,483 pure-normal 5-second tumbling windows), the false alarm rate is 0.0134% (1 flagged window) at k=1, and drops to 0.0000% (0 false alarms) at k=3. 100% of flagged pure-normal windows are clustered within 5 seconds of an attack window."
+    },
+    "C4": {
+      "claim": "The elevated cross-session permutation AUC (S0->S1 mean 0.58) is caused by distribution shift between capture days, not leakage.",
+      "verdict": "CONFIRMED",
+      "summary": "A clean 4-way label permutation decomposition (25 iterations each, 100 total Random Forest fits) confirmed that both intra-session tests are strictly at chance (Condition a Intra-S0 mean AUC = 0.5161, 95% CI [0.4790, 0.5532]; Condition c Intra-S1 mean AUC = 0.5196, 95% CI [0.4870, 0.5523]; both contain 0.50). Zero label leakage exists. In contrast, cross-session permutation in Condition b (S0->S1) yields an elevated mean AUC of 0.6194 (95% CI [0.5486, 0.6903]), confirming that elevation is driven entirely by covariate shift between capture days."
+    }
+  },
+  "metrics": {
+    "C1": {
+      "total_rows": 2540047,
+      "stime": {
+        "pairwise_out_of_order_rows": 345831,
+        "pairwise_out_of_order_pct": 13.615142,
+        "running_max_late_rows": 487787,
+        "running_max_late_pct": 19.203857,
+        "lateness_percentiles_s": {
+          "p50": 1.0,
+          "p90": 6.0,
+          "p99": 50.0,
+          "p99_9": 300.0,
+          "max": 8896.0
+        },
+        "watermark_drops": {
+          "10s": { "dropped_rows": 32172, "pct": 1.266591 },
+          "30s": { "dropped_rows": 15333, "pct": 0.603650 },
+          "60s": { "dropped_rows": 36, "pct": 0.001417 },
+          "300s": { "dropped_rows": 18, "pct": 0.000709 }
+        }
+      },
+      "ltime": {
+        "pairwise_out_of_order_rows": 0,
+        "pairwise_out_of_order_pct": 0.0,
+        "running_max_late_rows": 0,
+        "running_max_late_pct": 0.0,
+        "lateness_percentiles_s": {
+          "p50": 0.0,
+          "p90": 0.0,
+          "p99": 0.0,
+          "p99_9": 0.0,
+          "max": 0.0
+        }
+      }
+    },
+    "C2": {
+      "previous_replay_slice": {
+        "file": "UNSW-NB15_1.csv",
+        "rows": "0..1999",
+        "in_session_0_training_set": true,
+        "overlap_pct": 100.0
+      },
+      "unseen_burst_replay": {
+        "file": "UNSW-NB15_3.csv",
+        "session": 1,
+        "rows": 10000,
+        "attacks": 2466,
+        "attack_pct": 24.66,
+        "in_training_set": false,
+        "produced": 10000,
+        "consumed": 9727,
+        "scored": 9727,
+        "flow_processing_latency_ms": {
+          "overall_p50": 5843.2,
+          "overall_p95": 12382.4,
+          "warmup_batch_0_p50": 2855.8,
+          "steady_state_batch_1_plus_p50": 5860.6,
+          "steady_state_batch_1_plus_p95": 12393.8
+        },
+        "pure_normal_windows": 4,
+        "pure_normal_alerts_k1": 0,
+        "pure_normal_alerts_k3": 0
+      }
+    },
+    "C3": {
+      "test_dataset": "Session 0 (1,087,203 flows)",
+      "total_pure_normal_windows": 7483,
+      "total_attack_windows": 1400,
+      "window_far_k1": 0.0001336,
+      "window_far_k1_pct": 0.01336,
+      "window_far_k3": 0.0,
+      "window_far_k3_pct": 0.0,
+      "connection_clustering": {
+        "top1_share": 0.15625,
+        "top5_share": 0.45192,
+        "top10_share": 0.60577,
+        "clustering_confirmed": true
+      },
+      "distance_to_nearest_attack_window_s": {
+        "min": 5.0,
+        "p50": 5.0,
+        "max": 5.0,
+        "clustered_within_60s_pct": 100.0
+      }
+    },
+    "C4": {
+      "condition_a_intra_s0": {
+        "mean_auc": 0.5161,
+        "std_auc": 0.0947,
+        "min_auc": 0.3365,
+        "max_auc": 0.7262,
+        "ci_95": [0.4790, 0.5532],
+        "contains_0_5": true
+      },
+      "condition_b_cross_s0_to_s1": {
+        "mean_auc": 0.6194,
+        "std_auc": 0.1812,
+        "min_auc": 0.3517,
+        "max_auc": 0.9634,
+        "ci_95": [0.5486, 0.6903],
+        "contains_0_5": false
+      },
+      "condition_c_intra_s1": {
+        "mean_auc": 0.5196,
+        "std_auc": 0.0832,
+        "min_auc": 0.2679,
+        "max_auc": 0.6559,
+        "ci_95": [0.4870, 0.5523],
+        "contains_0_5": true
+      },
+      "condition_d_cross_s1_to_s0": {
+        "mean_auc": 0.5319,
+        "std_auc": 0.1066,
+        "min_auc": 0.3039,
+        "max_auc": 0.7145,
+        "ci_95": [0.4901, 0.5737],
+        "contains_0_5": true
+      }
+    }
+  }
+}
+

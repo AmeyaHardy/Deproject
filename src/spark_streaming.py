@@ -60,6 +60,10 @@ from pyspark.sql.types import (
     DoubleType,
     LongType,
 )
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 from src.raw_loader import FEATURE_NAMES
 
 # ── Configuration Defaults ───────────────────────────────────────────────────
@@ -201,6 +205,17 @@ def parse_args():
         default=None,
         help="Output path to write benchmark execution metrics JSON.",
     )
+    parser.add_argument(
+        "--watermark",
+        type=str,
+        default="60 seconds",
+        help=(
+            "Streaming event-time watermark delay (default: '60 seconds'). "
+            "60s accommodates UNSW-NB15 stime arrival lateness without dropping "
+            "valid flows: empirical audit showed 10s drops 1.27%% (32,172 flows) "
+            "while 60s drops only 0.0014%% (36 flows)."
+        ),
+    )
     # Anomaly scoring options (Gate A7 / Part B)
     parser.add_argument(
         "--score",
@@ -280,6 +295,8 @@ def main():
         SparkSession.builder
         .appName("NetworkTrafficStreaming")
         .master("local[*]")
+        .config("spark.driver.host", "127.0.0.1")
+        .config("spark.driver.bindAddress", "127.0.0.1")
         .config(
             "spark.jars.packages",
             "org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.5",
@@ -290,8 +307,9 @@ def main():
             "spark.sql.streaming.checkpointFileManagerClass",
             "org.apache.spark.sql.execution.streaming.FileSystemBasedCheckpointFileManager",
         )
-        .config("spark.driver.extraJavaOptions", f"-Djava.library.path={hadoop_bin}")
-        .config("spark.executor.extraJavaOptions", f"-Djava.library.path={hadoop_bin}")
+        .config("spark.sql.session.timeZone", "UTC")
+        .config("spark.driver.extraJavaOptions", f"-Djava.library.path={hadoop_bin} -Duser.timezone=UTC")
+        .config("spark.executor.extraJavaOptions", f"-Djava.library.path={hadoop_bin} -Duser.timezone=UTC")
         # Reduce noisy log output
         .config("spark.ui.showConsoleProgress", "false")
     )
@@ -424,7 +442,7 @@ def main():
     )
 
     # ── Watermark ───────────────────────────────────────────────────────
-    watermarked = parsed.withWatermark("event_time", "10 seconds")
+    watermarked = parsed.withWatermark("event_time", args.watermark)
 
     # ── 5-Second Tumbling Window Aggregations ───────────────────────────
     agg_exprs = [

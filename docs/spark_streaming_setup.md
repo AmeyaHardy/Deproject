@@ -129,7 +129,9 @@ A **tumbling window** divides the time axis into fixed, non-overlapping interval
 
 Each record is assigned to exactly one window based on its `event_time`. Records with `event_time` between `10:00:00` and `10:00:05` go into one window; records between `10:00:05` and `10:00:10` go into the next.
 
-**Watermark**: A 10-second watermark allows for minor event-time disorder. After Spark sees an event at time T, it will still accept events with timestamps as old as T-10s.
+**Watermark & UTC Alignment**:
+- **Watermark (`--watermark`)**: Configured with a default of **`"60 seconds"`**. Empirical lateness analysis across all 2.54M raw flows (Task C1) revealed that flow start times (`stime`) exhibit 13.62% pairwise inversions and 19.20% running-max lateness (p99 lateness = 50.0s, p99.9 = 60.0s). A 10-second watermark dropped **1.27% of traffic (32,172 flows)**; the 60-second watermark reduces data drops to **0.0014% (36 flows)**.
+- **Timezone (Explicit UTC)**: SparkSession is configured with `spark.sql.session.timeZone = "UTC"` and driver/executor JVM flags `-Duser.timezone=UTC`. This guarantees that 5-second tumbling window boundaries evaluate strictly as $\lfloor stime / 5 \rfloor \times 5$ in UTC without local JVM timezone offsets (e.g. IST +05:30).
 
 **Output mode**: We use "update" mode, which outputs only new or changed window rows each trigger cycle. This gives fast feedback during development without producing unbounded output.
 
@@ -170,6 +172,7 @@ cd C:\Users\sweni\Documents\DE-Network-Monitoring
 ```powershell
 python src/spark_streaming.py `
   --score `
+  --watermark "60 seconds" `
   --shuffle-partitions 2 `
   --alert-k 3 `
   --threshold-file data/processed/models/calibrated_threshold.json
@@ -233,4 +236,4 @@ This directory is already excluded from Git via `data/processed/*` in `.gitignor
 
 4. **Window timing**: Since `csv_replayer.py` generates `event_time` as the current wall-clock time at emission, all records from a single replay run will have closely spaced timestamps. With `--rate 10`, you'll typically see 2–3 windows of ~25 records each for a 50-record batch.
 
-5. **No anomaly detection yet**: This stage focuses on streaming ingestion and aggregation. Detection logic, model scoring, dashboard, and persistent storage are planned for future stages.
+5. **Persistence and Dashboard**: Real-time anomaly detection and window aggregation are implemented via `--score`. Downstream PostgreSQL / Parquet persistence and a live monitoring dashboard are planned for future stages.
