@@ -1,0 +1,25 @@
+{
+  "topic": "postgres-e2e-5k-20261102_022408",
+  "shufflePartitions": 2,
+  "targetRecords": 5000,
+  "actualRecordsProcessed": 5000,
+  "totalElapsedSec": 17.19,
+  "numBatches": 1,
+  "avgBatchDurationMs": 16990.0,
+  "minBatchDurationMs": 16990,
+  "maxBatchDurationMs": 16990,
+  "recordsPerSec": 290.85,
+  "laggingBatchesCount": 1,
+  "checkpointDir": "D:/spark_checkpoints/postgres-e2e-5k-20261102_022408",
+  "batches": [
+    {
+      "batchId": 0,
+      "numInputRows": 5000,
+      "cumulativeRows": 5000,
+      "triggerExecutionMs": 16990,
+      "inputRowsPerSecond": 0.0,
+      "processedRowsPerSecond": 294.27343887940674,
+      "timestamp": "2026-11-01T20:58:22.740Z"
+    }
+  ]
+}

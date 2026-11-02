@@ -156,6 +156,10 @@ message_schema = StructType([
     StructField("evaluation",  evaluation_schema),
 ])
 
+# Worker-level singleton cache for model and preprocessor (Gate A7/D)
+_WORKER_MODEL = None
+_WORKER_PREPROC = None
+
 
 # ── Main ─────────────────────────────────────────────────────────────────────
 
@@ -241,6 +245,19 @@ def parse_args():
         default=3,
         help="Minimum number of flagged flows in a 5s window to trigger a window_alert (default: 3).",
     )
+    # PostgreSQL persistence options (Gate D1-D5, F6)
+    parser.add_argument(
+        "--db-sink",
+        action="store_true",
+        default=False,
+        help="Enable PostgreSQL database sink via foreachBatch.",
+    )
+    parser.add_argument(
+        "--run-id",
+        type=str,
+        default=None,
+        help="Model run identifier for model_runs and flow_scores tracking.",
+    )
     return parser.parse_args()
 
 
@@ -274,6 +291,12 @@ def main():
     hadoop_bin = str(Path(hadoop_home) / "bin") if hadoop_home else ""
     if hadoop_bin and hadoop_bin not in os.environ.get("PATH", ""):
         os.environ["PATH"] = f"{hadoop_bin};{os.environ.get('PATH', '')}"
+
+    # Ensure PySpark workers use the active python interpreter (prevent 'python3' not found on Windows)
+    if "PYSPARK_PYTHON" not in os.environ:
+        os.environ["PYSPARK_PYTHON"] = sys.executable
+    if "PYSPARK_DRIVER_PYTHON" not in os.environ:
+        os.environ["PYSPARK_DRIVER_PYTHON"] = sys.executable
 
     # ── Build Spark session ─────────────────────────────────────────────
     # The Kafka connector JAR is not bundled with PySpark.
@@ -359,6 +382,7 @@ def main():
         model_file_str = str(model_path.resolve())
         preproc_dir_str = str(preproc_path.resolve())
 
+        global _WORKER_MODEL, _WORKER_PREPROC
         _WORKER_MODEL = None
         _WORKER_PREPROC = None
 
@@ -422,8 +446,14 @@ def main():
         .select(
             F.col("data.record_id").alias("record_id"),
             F.col("data.context.srcip").alias("srcip"),
+            F.col("data.context.sport").alias("sport"),
+            F.col("data.context.dstip").alias("dstip"),
+            F.col("data.context.dsport").alias("dsport"),
+            F.col("data.context.stime").alias("stime"),
+            F.col("data.context.ltime").alias("ltime"),
             F.to_timestamp(F.col("data.event_time")).alias("event_time"),
             F.col("data.ingest_time").alias("ingest_time"),
+            F.col("data.features").alias("features"),
             F.col("data.features.proto").alias("proto"),
             F.col("data.features.spkts").alias("spkts"),
             F.col("data.features.dpkts").alias("dpkts"),
@@ -433,8 +463,8 @@ def main():
             F.col("data.features.rate").alias("rate"),
             F.col("data.features.sload").alias("sload"),
             F.col("data.features.dload").alias("dload"),
-            F.col("data.evaluation.label").alias("label"),
-            F.col("data.evaluation.attack_cat").alias("attack_cat"),
+            F.col("data.evaluation.label").alias("label"),  # GROUND-TRUTH PASSTHROUGH ONLY (NEVER MODEL INPUT - Gate X3)
+            F.col("data.evaluation.attack_cat").alias("attack_cat"),  # GROUND-TRUTH PASSTHROUGH ONLY (NEVER MODEL INPUT - Gate X3)
             F.col("anomaly_score"),
             F.col("flagged"),
         )
@@ -496,29 +526,84 @@ def main():
         )
     )
 
-    # ── Write to Console ────────────────────────────────────────────────
-    print("Starting streaming query...")
-    print(f"Waiting for records from Kafka topic '{args.topic}' ...")
-    print(f"(In another terminal, run: python src/csv_replayer.py --kafka --topic {args.topic} --limit 50 --rate 10)")
-    print()
-    print("=" * 80)
-    print("  STREAMING OUTPUT — 5-Second Tumbling Window Aggregations")
-    print("  Note: 'attack_records' is ground-truth count, NOT detection output.")
-    print("=" * 80)
-    print()
+    if args.db_sink:
+        from src.db_sink import insert_model_run, process_spark_batch
 
-    query = (
-        window_stats.writeStream
-        .outputMode("update")
-        .format("console")
-        .option("truncate", "false")
-        .option("numRows", 50)
-        # Process every trigger interval (default 5 seconds)
-        .trigger(processingTime=args.trigger_interval)
-        .option("checkpointLocation", args.checkpoint_dir)
-        .queryName(f"network_traffic_{args.topic.replace('-', '_')}")
-        .start()
-    )
+        run_id = args.run_id or f"rf_run_{int(time.time())}"
+        model_file = str(Path(args.model_dir) / "rf_detector.joblib")
+        preproc_file = str(Path("data/processed/preprocessing_artifacts").resolve())
+        prov_file = Path("data/processed/preprocessing_artifacts/preprocessing_provenance.json")
+        provenance = {}
+        if prov_file.exists():
+            try:
+                provenance = json.loads(prov_file.read_text(encoding="utf-8"))
+            except Exception as e:
+                print(f"WARN: Could not load provenance from {prov_file}: {e}")
+
+        # Gate D5: Record model run and training provenance
+        insert_model_run(
+            run_id=run_id,
+            model_file=model_file,
+            preprocessor_file=preproc_file,
+            threshold=threshold,
+            alert_k=args.alert_k,
+            watermark=args.watermark,
+            provenance=provenance,
+        )
+        print(f"PostgreSQL persistence initialized for run_id: {run_id}")
+
+        def foreach_batch_writer(batch_df, batch_id):
+            batch_df.persist()
+            try:
+                process_spark_batch(
+                    batch_df=batch_df,
+                    batch_id=batch_id,
+                    run_id=run_id,
+                    alert_k=args.alert_k,
+                    feature_names=FEATURE_NAMES,
+                )
+            finally:
+                batch_df.unpersist()
+
+        print("=" * 80)
+        print("  STREAMING OUTPUT — PostgreSQL Database Sink (ForeachBatch)")
+        print("  INFO: --db-sink enabled. Running single streaming query with foreachBatch persistence.")
+        print("  Console window aggregation query is disabled to prevent duplicate model scoring.")
+        print("=" * 80)
+        print(f"Waiting for records from Kafka topic '{args.topic}' ...\n")
+
+        query = (
+            parsed.writeStream
+            .trigger(processingTime=args.trigger_interval)
+            .option("checkpointLocation", args.checkpoint_dir)
+            .foreachBatch(foreach_batch_writer)
+            .queryName(f"network_traffic_db_{args.topic.replace('-', '_')}")
+            .start()
+        )
+    else:
+        # ── Write to Console ────────────────────────────────────────────────
+        print("Starting streaming query...")
+        print(f"Waiting for records from Kafka topic '{args.topic}' ...")
+        print(f"(In another terminal, run: python src/csv_replayer.py --kafka --topic {args.topic} --limit 50 --rate 10)")
+        print()
+        print("=" * 80)
+        print("  STREAMING OUTPUT — 5-Second Tumbling Window Aggregations")
+        print("  Note: 'attack_records' is ground-truth count, NOT detection output.")
+        print("=" * 80)
+        print()
+
+        query = (
+            window_stats.writeStream
+            .outputMode("update")
+            .format("console")
+            .option("truncate", "false")
+            .option("numRows", 50)
+            # Process every trigger interval (default 5 seconds)
+            .trigger(processingTime=args.trigger_interval)
+            .option("checkpointLocation", args.checkpoint_dir)
+            .queryName(f"network_traffic_{args.topic.replace('-', '_')}")
+            .start()
+        )
 
     if args.stop_after_records is not None:
         print(f"\n[BENCHMARK] Monitoring query until {args.stop_after_records} records are processed...")
@@ -529,8 +614,13 @@ def main():
         empty_batches_after_target = 0
 
         try:
-            while query.isActive:
+            should_stop = False
+            while query.isActive and not should_stop:
                 time.sleep(1)
+                if query.exception():
+                    print(f"ERROR: Streaming query failed with exception: {query.exception()}", file=sys.stderr)
+                    raise query.exception()
+
                 recent = query.recentProgress
                 for p in recent:
                     bid = p.get("batchId")
@@ -567,7 +657,11 @@ def main():
                                     f"and final window flushed. Stopping query..."
                                 )
                                 query.stop()
+                                should_stop = True
                                 break
+            if query.exception():
+                print(f"ERROR: Streaming query failed with exception: {query.exception()}", file=sys.stderr)
+                raise query.exception()
         except KeyboardInterrupt:
             print("\nBenchmark interrupted by user.")
             query.stop()

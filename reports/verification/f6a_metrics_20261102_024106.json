@@ -1,0 +1,25 @@
+{
+  "topic": "postgres-f6a-20261102_024106",
+  "shufflePartitions": 2,
+  "targetRecords": 1000,
+  "actualRecordsProcessed": 1000,
+  "totalElapsedSec": 15.17,
+  "numBatches": 1,
+  "avgBatchDurationMs": 14844.0,
+  "minBatchDurationMs": 14844,
+  "maxBatchDurationMs": 14844,
+  "recordsPerSec": 65.9,
+  "laggingBatchesCount": 1,
+  "checkpointDir": "D:/spark_checkpoints/postgres-f6a-20261102_024106",
+  "batches": [
+    {
+      "batchId": 0,
+      "numInputRows": 1000,
+      "cumulativeRows": 1000,
+      "triggerExecutionMs": 14844,
+      "inputRowsPerSecond": 0.0,
+      "processedRowsPerSecond": 67.36728644570196,
+      "timestamp": "2026-11-01T21:11:59.700Z"
+    }
+  ]
+}

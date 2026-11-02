@@ -1,0 +1,28 @@
+{
+  "timestamp": "2026-11-01T21:03:11.024128+00:00",
+  "seed": 42,
+  "gates": {
+    "D1": "PASS",
+    "D2": "PASS",
+    "D3": "PASS",
+    "D4": "PASS",
+    "D5": "PASS",
+    "X1": "PASS",
+    "X2": "PASS",
+    "X3": "PASS",
+    "X4": "PASS"
+  },
+  "reconciliation": {
+    "produced": 5000,
+    "consumed_spark": 5000,
+    "raw_flows": 5000,
+    "flow_scores": 5000,
+    "window_metrics_sum": 5000,
+    "windows_count": 35,
+    "exact_match": true
+  },
+  "idempotent_rerun": {
+    "raw_flows_after_rerun": 5000,
+    "duplicates_introduced": 0
+  }
+}

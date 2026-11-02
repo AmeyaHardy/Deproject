@@ -1,0 +1,25 @@
+{
+  "topic": "postgres-rerun-5k-20261102_022408",
+  "shufflePartitions": 2,
+  "targetRecords": 5000,
+  "actualRecordsProcessed": 5000,
+  "totalElapsedSec": 15.16,
+  "numBatches": 1,
+  "avgBatchDurationMs": 14608.0,
+  "minBatchDurationMs": 14608,
+  "maxBatchDurationMs": 14608,
+  "recordsPerSec": 329.73,
+  "laggingBatchesCount": 1,
+  "checkpointDir": "D:/spark_checkpoints/postgres-rerun-5k-20261102_022408",
+  "batches": [
+    {
+      "batchId": 0,
+      "numInputRows": 5000,
+      "cumulativeRows": 5000,
+      "triggerExecutionMs": 14608,
+      "inputRowsPerSecond": 0.0,
+      "processedRowsPerSecond": 342.27820372398685,
+      "timestamp": "2026-11-01T21:02:54.896Z"
+    }
+  ]
+}
