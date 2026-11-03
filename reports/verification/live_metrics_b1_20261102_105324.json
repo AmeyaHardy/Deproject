@@ -1,0 +1,178 @@
+{
+  "topic": "live-stream-b1-20261102_105324",
+  "shufflePartitions": 2,
+  "targetRecords": 3000,
+  "actualRecordsProcessed": 3000,
+  "totalElapsedSec": 106.92,
+  "numBatches": 18,
+  "avgBatchDurationMs": 5610.22,
+  "minBatchDurationMs": 4264,
+  "maxBatchDurationMs": 7413,
+  "recordsPerSec": 28.06,
+  "laggingBatchesCount": 14,
+  "checkpointDir": "D:\\spark-checkpoints\\live_b1_20261102_105324",
+  "batches": [
+    {
+      "batchId": 0,
+      "numInputRows": 0,
+      "cumulativeRows": 0,
+      "triggerExecutionMs": 4264,
+      "inputRowsPerSecond": 0.0,
+      "processedRowsPerSecond": 0.0,
+      "timestamp": "2026-11-02T10:53:50.375Z"
+    },
+    {
+      "batchId": 1,
+      "numInputRows": 126,
+      "cumulativeRows": 126,
+      "triggerExecutionMs": 7413,
+      "inputRowsPerSecond": 25.245441795231418,
+      "processedRowsPerSecond": 16.997167138810198,
+      "timestamp": "2026-11-02T10:54:00.001Z"
+    },
+    {
+      "batchId": 2,
+      "numInputRows": 239,
+      "cumulativeRows": 365,
+      "triggerExecutionMs": 6201,
+      "inputRowsPerSecond": 32.23196223870533,
+      "processedRowsPerSecond": 38.54217061764232,
+      "timestamp": "2026-11-02T10:54:07.416Z"
+    },
+    {
+      "batchId": 3,
+      "numInputRows": 200,
+      "cumulativeRows": 565,
+      "triggerExecutionMs": 6032,
+      "inputRowsPerSecond": 32.24766204450177,
+      "processedRowsPerSecond": 33.151002817835234,
+      "timestamp": "2026-11-02T10:54:13.618Z"
+    },
+    {
+      "batchId": 4,
+      "numInputRows": 195,
+      "cumulativeRows": 760,
+      "triggerExecutionMs": 5711,
+      "inputRowsPerSecond": 32.31687106397084,
+      "processedRowsPerSecond": 34.14463316406934,
+      "timestamp": "2026-11-02T10:54:19.652Z"
+    },
+    {
+      "batchId": 5,
+      "numInputRows": 184,
+      "cumulativeRows": 944,
+      "triggerExecutionMs": 6773,
+      "inputRowsPerSecond": 32.20724663049186,
+      "processedRowsPerSecond": 27.16669127417688,
+      "timestamp": "2026-11-02T10:54:25.365Z"
+    },
+    {
+      "batchId": 6,
+      "numInputRows": 219,
+      "cumulativeRows": 1163,
+      "triggerExecutionMs": 6095,
+      "inputRowsPerSecond": 32.32949512843224,
+      "processedRowsPerSecond": 35.93109105824446,
+      "timestamp": "2026-11-02T10:54:32.139Z"
+    },
+    {
+      "batchId": 7,
+      "numInputRows": 196,
+      "cumulativeRows": 1359,
+      "triggerExecutionMs": 5701,
+      "inputRowsPerSecond": 32.15223097112861,
+      "processedRowsPerSecond": 34.37993334502719,
+      "timestamp": "2026-11-02T10:54:38.235Z"
+    },
+    {
+      "batchId": 8,
+      "numInputRows": 184,
+      "cumulativeRows": 1543,
+      "triggerExecutionMs": 5249,
+      "inputRowsPerSecond": 32.269379165205194,
+      "processedRowsPerSecond": 35.0542960563917,
+      "timestamp": "2026-11-02T10:54:43.937Z"
+    },
+    {
+      "batchId": 9,
+      "numInputRows": 169,
+      "cumulativeRows": 1712,
+      "triggerExecutionMs": 5471,
+      "inputRowsPerSecond": 32.19047619047619,
+      "processedRowsPerSecond": 30.884502923976605,
+      "timestamp": "2026-11-02T10:54:49.187Z"
+    },
+    {
+      "batchId": 10,
+      "numInputRows": 177,
+      "cumulativeRows": 1889,
+      "triggerExecutionMs": 6170,
+      "inputRowsPerSecond": 32.340581034167734,
+      "processedRowsPerSecond": 28.687196110210696,
+      "timestamp": "2026-11-02T10:54:54.660Z"
+    },
+    {
+      "batchId": 11,
+      "numInputRows": 199,
+      "cumulativeRows": 2088,
+      "triggerExecutionMs": 5221,
+      "inputRowsPerSecond": 32.24760978771674,
+      "processedRowsPerSecond": 38.11530358168933,
+      "timestamp": "2026-11-02T10:55:00.831Z"
+    },
+    {
+      "batchId": 12,
+      "numInputRows": 169,
+      "cumulativeRows": 2257,
+      "triggerExecutionMs": 4615,
+      "inputRowsPerSecond": 32.363079279969355,
+      "processedRowsPerSecond": 36.61971830985915,
+      "timestamp": "2026-11-02T10:55:06.053Z"
+    },
+    {
+      "batchId": 13,
+      "numInputRows": 149,
+      "cumulativeRows": 2406,
+      "triggerExecutionMs": 5568,
+      "inputRowsPerSecond": 32.2790294627383,
+      "processedRowsPerSecond": 26.76005747126437,
+      "timestamp": "2026-11-02T10:55:10.669Z"
+    },
+    {
+      "batchId": 14,
+      "numInputRows": 180,
+      "cumulativeRows": 2586,
+      "triggerExecutionMs": 4720,
+      "inputRowsPerSecond": 32.31597845601436,
+      "processedRowsPerSecond": 38.13559322033898,
+      "timestamp": "2026-11-02T10:55:16.239Z"
+    },
+    {
+      "batchId": 15,
+      "numInputRows": 152,
+      "cumulativeRows": 2738,
+      "triggerExecutionMs": 4961,
+      "inputRowsPerSecond": 32.19656852361788,
+      "processedRowsPerSecond": 30.638984075791168,
+      "timestamp": "2026-11-02T10:55:20.960Z"
+    },
+    {
+      "batchId": 16,
+      "numInputRows": 160,
+      "cumulativeRows": 2898,
+      "triggerExecutionMs": 5467,
+      "inputRowsPerSecond": 32.24506247480855,
+      "processedRowsPerSecond": 29.26650813974758,
+      "timestamp": "2026-11-02T10:55:25.922Z"
+    },
+    {
+      "batchId": 17,
+      "numInputRows": 102,
+      "cumulativeRows": 3000,
+      "triggerExecutionMs": 5352,
+      "inputRowsPerSecond": 18.653986832479884,
+      "processedRowsPerSecond": 19.05829596412556,
+      "timestamp": "2026-11-02T10:55:31.390Z"
+    }
+  ]
+}
