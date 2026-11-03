@@ -1,0 +1,50 @@
+{
+  "run_id": "run_dash_impact_20261102_121414",
+  "target_records": 3000,
+  "final_raw_flows": 3000,
+  "final_flow_scores": 3000,
+  "final_window_metrics": 24,
+  "total_poll_cycles": 12,
+  "mean_dashboard_refresh_sql_ms": 75.67,
+  "p95_dashboard_refresh_sql_ms": 186.4,
+  "snapshots": {
+    "T_start": {
+      "elapsed_s": 10.33,
+      "total_flows": 0,
+      "flagged_flows": 0,
+      "alerted_windows": 0,
+      "total_sql_ms": 32.0,
+      "health_ms": 0.0
+    },
+    "T_mid": {
+      "elapsed_s": 36.75,
+      "total_flows": 503,
+      "flagged_flows": 85,
+      "alerted_windows": 4,
+      "total_sql_ms": 63.0,
+      "health_ms": 31.0
+    },
+    "T_end": {
+      "elapsed_s": 100.25,
+      "total_flows": 1921,
+      "flagged_flows": 338,
+      "alerted_windows": 13,
+      "total_sql_ms": 0.0
+    }
+  },
+  "impact_comparison": {
+    "phase1_polling_on": {
+      "batch_count": 10,
+      "avg_duration_ms": 8891.9,
+      "p95_duration_ms": 17120.0,
+      "batches_over_5s": 10
+    },
+    "phase2_polling_off": {
+      "batch_count": 9,
+      "avg_duration_ms": 7511.22,
+      "p95_duration_ms": 9902.2,
+      "batches_over_5s": 9
+    },
+    "duration_delta_ms": 1380.68
+  }
+}

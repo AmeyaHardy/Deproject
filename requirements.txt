@@ -1,0 +1,15 @@
+# Core Pipeline Dependencies
+pyspark==3.5.5
+kafka-python-ng==2.2.3
+psycopg2-binary==2.9.13
+pandas==2.3.3
+numpy==2.2.6
+scikit-learn==1.7.2
+joblib==1.5.3
+pyarrow==25.0.1
+pytest==9.1.1
+
+# Serving & Observability Dashboard
+streamlit==1.65.0
+plotly==7.1.0
+altair==6.2.2
